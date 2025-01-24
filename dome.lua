@@ -9,4 +9,5 @@ function drawDome()
     ovalfill(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth, 3)
     clip(0, domeY - 1, 128, 128)
     oval(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth, 7)
+    clip()
 end
