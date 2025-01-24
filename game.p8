@@ -2,15 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- ggj 2025 - bubble!
-
-function _init()
-end
-
-function _draw()
-end
-
-function _update()
-end
+#include main.lua
 
 __gfx__
 00000000000000000000000000000000000000000000bb0000022000000000000000000000000000000000000000000000000000000000000000000000000000
