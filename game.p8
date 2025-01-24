@@ -6,7 +6,8 @@ __lua__
 #include dome.lua
 #include people.lua
 #include ui.lua
-poke(0x5F2D, 1)  -- enable mouse
+#include objects.lua
+poke(0x5F2D, 1) -- enable mouse
 
 __gfx__
 00000000000000000000000000000000000000000000000000070700000000000000000000000000000000000000000000000000000000000000000000000000

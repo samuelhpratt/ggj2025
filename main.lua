@@ -5,6 +5,7 @@ function _draw()
     cls(1)
     drawDome()
     drawPeople()
+    drawObjects()
     drawUI()
     pset(mouseX, mouseY, 7)
 end
@@ -16,5 +17,6 @@ function _update()
     mouseHeld = stat(34) > 0 -- true if the mouse button is held
     
     updatePeople()
+    updateObjects()
     updateUI()
 end

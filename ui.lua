@@ -8,7 +8,7 @@ pressedButton = nil
 buttons = {
     {
         x = 2, y = 0, w = 10, h = 8, onClick = function()
-            showNewDialogue("button 1 pressed!")
+            spawnObject(rnd(50) - 25, rnd(50) - 25, 50, "food")
         end
     },
     {
