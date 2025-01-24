@@ -1,12 +1,10 @@
 function _init()
 
     //init people
+    local n = 100
     people = {} //global
     
-
-    --people = {{x=10, y=15}, {x=20, y=30}, {x=25, y=35}}
-    
-    for i = 1,100 do
+    for i = 1,n do
         local person = {x=65, y=65}
         add(people,person)
     end
@@ -47,12 +45,6 @@ function _update()
 end
 
 function _draw()
-    --[[
-    cls()
-    spr(1,10,30)
-    spr(1,15,45)
-    ]]
-
     
     cls()
     for i = 1,#people do
