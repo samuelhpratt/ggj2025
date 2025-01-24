@@ -4,12 +4,9 @@ domeY = 88
 function drawDome()
     local baseWidth = 4
     clip(0, 0, 128, domeY)
-    color(7)
-    circ(64, domeY-3, domeRadius)
+    circ(64, domeY-3, domeRadius, 7)
     clip()
-    color(3)
-    ovalfill(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth)
+    ovalfill(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth, 3)
     clip(0, domeY - 1, 128, 128)
-    color(7)
-    oval(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth)
+    oval(64 - domeRadius, domeY - domeRadius / baseWidth, 64 + domeRadius, domeY + domeRadius / baseWidth, 7)
 end
