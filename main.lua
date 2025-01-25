@@ -46,17 +46,18 @@ function _update()
     end
 
     if mouseHeld and not pressedTab and mode then
-        local x, y = screenPosToCoords(mouseX, mouseY + 30)
-        local z = 30
+        local z = 30 + rnd(5)
         if toolCooldown > 0 then
             toolCooldown -= 1
         else
-            if mode == "seeds" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
+            if mode == "seeds" and mouseX > 72 - domeRadius and mouseX < 72 + domeRadius and  mouseY + 40 * (1 - domeAngle) > domeY - domeRadius and  mouseY + 40 * (1 - domeAngle) < domeY + domeRadius * domeAngle then
+                local x, y = screenPosToCoords(mouseX - 10, mouseY + 50 * (1 - domeAngle))
                 x += rnd(2) - 1
                 y += rnd(2) - 1
                 spawnFood(x, y, z)
                 toolCooldown = 4
-            elseif mode == "water" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
+            elseif mode == "water" and mouseX > 88 - domeRadius and mouseX < 88 + domeRadius and mouseY + 40 > domeY - domeRadius and mouseY + 40 < domeY + domeRadius * domeAngle then
+                local x, y = screenPosToCoords(mouseX - 24, mouseY + 40)
                 x += rnd(10) - 5
                 y += rnd(10) - 5
                 spawnDroplet(x, y, z)

@@ -7,8 +7,6 @@ pressedTab = nil
 tabSpacing = 20
 
 mouseSprites = { pointer = 112, open = 113, grab = 114 }
-toolSprites = { seeds = 67, water = 83, fire = 99 }
-
 tabs = {
     {
         icon = 67, onClick = function()
@@ -136,8 +134,15 @@ end
 function drawUI()
     local mouseSprite = mouseSprites[mouseState]
 
-    -- draw lazer
-    if mode == "fire" then
+    if mode == "seeds" then
+        local x, y = mouseX - 12, mouseY - 10 -- center
+        pal(11, 0)
+        spr(68, x - 3, y - 3, 4, 4)
+    elseif mode == "water" then
+        local x, y = mouseX - 20, mouseY - 18 -- center
+        pal(14, 0)
+        spr(72, x - 3, y +16, 4, 4)
+    elseif mode == "fire" then
         -- set the screen memory as the spritesheet
         -- and stretch screen->screen
         poke(0x5f54, 0x60)
@@ -162,21 +167,11 @@ function drawUI()
     drawDialogue()
     drawButtons()
 
-    pal({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
-    if mode and mode ~= "fire" then
-        spr(toolSprites[mode], mouseX - 7, mouseY - 4)
-        spr(toolSprites[mode], mouseX - 6, mouseY - 3)
-        spr(toolSprites[mode], mouseX - 5, mouseY - 4)
-        spr(toolSprites[mode], mouseX - 6, mouseY - 5)
-    end
-
+    pal{0,0,0,0,0,0,0,0,0,0,0,0,0}
     spr(mouseSprite, mouseX - 3, mouseY)
     spr(mouseSprite, mouseX - 2, mouseY - 1)
     spr(mouseSprite, mouseX - 2, mouseY + 1)
     spr(mouseSprite, mouseX - 1, mouseY)
     pal()
-    if mode and mode ~= "fire" then
-        spr(toolSprites[mode], mouseX - 6, mouseY - 4)
-    end
     spr(mouseSprite, mouseX - 2, mouseY)
 end

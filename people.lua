@@ -102,12 +102,11 @@ function spawnPerson(x, y, z)
     end
 
     function person.updatePhysics(self)
-
         --avoid other people
         local otherImpPower = 1
         local otherImpX = 0
         local otherImpY = 0
-    
+
         for other in all(people) do
             -- simple distance check
             if (other.x - self.x) * (other.x - self.x) + (other.y - self.y) * (other.y - self.y) < 9 then
@@ -115,10 +114,9 @@ function spawnPerson(x, y, z)
                 otherImpY = (other.y - self.y) * otherImpPower
             end
         end
-    
+
         self.dx = self.dx - otherImpX
         self.dy = self.dy - otherImpY
-
 
         --bounce off dome
         local domeImpPower = 1.3
@@ -126,14 +124,13 @@ function spawnPerson(x, y, z)
         local newY = self.y + self.dy
 
         if not withinDomeFootprint(newX, newY) then
-
             --bounce
 
             --play sound
             glassSFX()
-            
+
             --bounce direction
-            --if they were going out of the dome at this location, 
+            --if they were going out of the dome at this location,
             --then going the opposite from that location would bounce them away
             local domeImpX = (newX - self.x) * domeImpPower
             local domeImpY = (newY - self.y) * domeImpPower
@@ -145,9 +142,7 @@ function spawnPerson(x, y, z)
             self.x = newX
             self.y = newY
         end
-
     end
-
 
     function person.update(self)
         -- add person-specific update logic here
@@ -247,25 +242,23 @@ end
 
 function getFood(person)
     --food
-    local closestFood = { x = 999, y = 999 }
+    local closestFood = nil
     local shortestDistance = 30000
-    local foodExists = #foods > 0
-    local dist = 0
     local foodForcePower = 0.03
 
-    if foodExists then
-        for food in all(foods) do
-            dist = distanceToPoint(person, food)
+    for food in all(foods) do
+        if food.z == 0 then
+            local dist = distanceToPoint(person, food)
             if dist < shortestDistance then
                 closestFood = food
                 shortestDistance = dist
             end
         end
+    end
 
+    if closestFood then
         person.dx = -1 * (person.x - closestFood.x) * foodForcePower
         person.dy = -1 * (person.y - closestFood.y) * foodForcePower
-    else
-        --do nothing
     end
 end
 
@@ -285,7 +278,7 @@ function fleeFire(person)
                 shortestDistance = dist
             end
         end
-    
+
         person.dx = 1 * (person.x - closestFire.x) * fireForcePower
         person.dy = 1 * (person.y - closestFire.y) * fireForcePower
     else
