@@ -11,18 +11,21 @@ tabs = {
         icon = 1, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "food")
+            showNewDialogue("test message")
         end
     },
     {
         icon = 2, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+            showNewDialogue("test message...\nwith a second line!!")
         end
     },
     {
         icon = 3, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+            showNewDialogue("test message...\nwith a second line......\nand a third line???")
         end
     },
     {
@@ -72,7 +75,7 @@ end
 function showNewDialogue(text)
     dialogue = text
     dialoguePosition = 0
-    dialogueVisibleTimer = 40
+    dialogueVisibleTimer = 60
     local w, h = print(dialogue, 999, 0)
     dialogueHeight = h + 6
 end
