@@ -50,7 +50,7 @@ function drawDome()
     fillp()
 
     -- draw ground
-    ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 3)
+    ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 2)
 
     drawPuddles()
 
