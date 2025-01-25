@@ -10,6 +10,7 @@ __lua__
 #include people.lua
 #include water.lua
 #include fire.lua
+#include food.lua
 #include ui.lua
 #include states.lua
 

@@ -38,10 +38,10 @@ function _update()
 
     if mouseHeld and mode then
         local x, y = screenPosToCoords(mouseX, mouseY)
-        if mode == "seeds" then
+        if mode == "food" then
                 x += rnd(2) - 1
                 y += rnd(2) - 1
-                spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
+                spawnFood(x, y, domeRadius - sqrt(x * x + y * y) / 2)
         elseif mode == "water" then
                 x += rnd(10) - 5
                 y += rnd(10) - 5

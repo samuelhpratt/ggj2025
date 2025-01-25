@@ -88,19 +88,22 @@ end
 
 function stateBasedMove(person)
 
---[[
-states
-* idle
-* getfood
-* runfromfire
-* rejoiceinrain
-]]
+    --[[
+    states
+    * idle
+    * getfood
+    * runfromfire
+    * rejoiceinrain
+    ]]
 
---getfood
---getFood(person)
+    --getfood
+    --getFood(person)
 
---idle
-idle(person)
+    --idle
+    --idle(person)
+
+    --flee from fire
+    fleeFromFire(person)
 
 
 
@@ -113,32 +116,60 @@ function getFood(person)
     --food
     local closestFood = { x = 999, y = 999 }
     local shortestDistance = 30000
-    local foodExists = false
+    local foodExists = #foods > 0
     local dist = 0
+    local foodForcePower = 0.01
 
-    for object in all(objects) do
-        if object.sprite == objectSprites.food then
-            foodExists = true
-            dist = distanceToPoint(person, object)
+    if foodExists then
+        for food in all(foods) do
+            dist = distanceToPoint(person, food)
             if dist < shortestDistance then
-                closestFood = object
+                closestFood = food
                 shortestDistance = dist
             end
         end
-    end
 
-    if foodExists then
-        foodForcePower = 0.01
+        person.dx = -1 * (person.x - closestFood.x) * foodForcePower
+        person.dy = -1 * (person.y - closestFood.y) * foodForcePower
     else
-        foodForcePower = 0
+        --do nothing
     end
 
-    local fx = (person.x - closestFood.x) * foodForcePower
-    local fy = (person.y - closestFood.y) * foodForcePower
-
-    person.dx = -fx
-    person.dy = -fy
 end
+
+
+
+function fleeFromFire(person)
+
+    --fire
+    local closestFire = { x = 999, y = 999 }
+    local shortestDistance = 30000
+    local fireExists = #fires > 0
+    local dist = 0
+    local fireForcePower = 0.05
+
+    if fireExists then
+        for fire in all(fires) do
+            dist = distanceToPoint(person, fire)
+            if dist < shortestDistance then
+                closestFire = fire
+                shortestDistance = dist
+            end
+        end
+    
+        person.dx = 1 * (person.x - closestFire.x) * fireForcePower
+        person.dy = 1 * (person.y - closestFire.y) * fireForcePower
+    else
+        --do nothing
+    end
+
+end
+
+--for when they are burning
+function runToWater(person)
+    --here
+end
+
 
 function idle(person)
 
@@ -148,12 +179,17 @@ function idle(person)
         newWaypoint(person)
     end
 
-    local fx = (person.x - person.waypoint.x) * waypointForcePower
-    local fy = (person.y - person.waypoint.y) * waypointForcePower
-
-    person.dx = -fx
-    person.dy = -fy
+    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
+    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
 end
+
+
+
+
+
+
+
+
 
 
 

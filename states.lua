@@ -19,23 +19,20 @@ function updateWorldInfo()
     --people fires y/n
     local peopleFires = false
 
-    for object in all(objects) do
-        if object.sprite == objectSprites.person then
-            if object.burning > 0 then
-                peopleFires = true
-            end
+    for person in all(people) do
+        if person.burning > 0 then
+            peopleFires = true
         end
     end
 
     thereIsFire = environmentFires or peopleFires
 
-    --[[
+    --log("env:"..tostr(environmentFires).." pers:"..tostr(peopleFires))
+
+    
     --food?
-    for person in people do
-        if person.fire > 0 then
-            peopleFires = true
-        end
-    end
-    ]]
+    thereIsFood = #foods > 0
+    --log("foods:"..tostr(thereIsFood))
+
 
 end
