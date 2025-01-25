@@ -1,6 +1,13 @@
 nPeople = 3
 people = {}
 
+personStates = {
+    idle = 1,
+    fleeFire = 2,
+    seekWater = 3,
+    getFood = 4
+}
+
 --above the spawnPerson function so can be used
 function newWaypoint(person)
     --return waypoint for you to save
@@ -23,6 +30,7 @@ function spawnPerson(x, y, z)
     person.color = flr(rnd({8,10,11}))
     person.burning = 0
     person.inWater = false
+    person.state = personStates.idle
 
     newWaypoint(person)
     -- add any other person-specific parameters here!
@@ -85,60 +93,49 @@ function distanceToPoint(pointA, pointB)
 end
 
 
-
 function stateBasedMove(person)
 
---[[
-states
-* idle
-* getfood
-* runfromfire
-* rejoiceinrain
-]]
+    --[[
+    states
+    * idle
+    * getfood
+    * runfromfire
+    * rejoiceinrain
+    ]]
+    log(person.state)
 
---getfood
---getFood(person)
+    if person.state == personStates.idle then
+        idle(person)
+        if thereIsFire then
+            person.state = personStates.fleeFire
+        elseif thereIsFood then
+            person.state = personStates.getFood
+        else
+            --do nothing
+        end
 
---idle
-idle(person)
+    elseif person.state == personStates.fleeFire then
+        fleeFire(person)
+        if not thereIsFire then
+            person.state = personStates.idle
+        else
+            --do nothing
+        end
 
+    elseif person.state == personStates.seekWater then
+        seekwater(person)
 
-
-end
-
-
-
-function getFood(person)
-
-    --food
-    local closestFood = { x = 999, y = 999 }
-    local shortestDistance = 30000
-    local foodExists = false
-    local dist = 0
-
-    for object in all(objects) do
-        if object.sprite == objectSprites.food then
-            foodExists = true
-            dist = distanceToPoint(person, object)
-            if dist < shortestDistance then
-                closestFood = object
-                shortestDistance = dist
-            end
+    elseif person.state == personStates.getFood then
+        getFood(person)
+        if thereIsFire then
+            person.state = personStates.fleeFire
+        else
+            --do nothing
         end
     end
 
-    if foodExists then
-        foodForcePower = 0.01
-    else
-        foodForcePower = 0
-    end
-
-    local fx = (person.x - closestFood.x) * foodForcePower
-    local fy = (person.y - closestFood.y) * foodForcePower
-
-    person.dx = -fx
-    person.dy = -fy
 end
+
 
 function idle(person)
 
@@ -148,12 +145,80 @@ function idle(person)
         newWaypoint(person)
     end
 
-    local fx = (person.x - person.waypoint.x) * waypointForcePower
-    local fy = (person.y - person.waypoint.y) * waypointForcePower
-
-    person.dx = -fx
-    person.dy = -fy
+    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
+    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
 end
+
+
+function getFood(person)
+
+    --food
+    local closestFood = { x = 999, y = 999 }
+    local shortestDistance = 30000
+    local foodExists = #foods > 0
+    local dist = 0
+    local foodForcePower = 0.01
+
+    if foodExists then
+        for food in all(foods) do
+            dist = distanceToPoint(person, food)
+            if dist < shortestDistance then
+                closestFood = food
+                shortestDistance = dist
+            end
+        end
+
+        person.dx = -1 * (person.x - closestFood.x) * foodForcePower
+        person.dy = -1 * (person.y - closestFood.y) * foodForcePower
+    else
+        --do nothing
+    end
+
+end
+
+
+
+function fleeFire(person)
+
+    --fire
+    local closestFire = { x = 999, y = 999 }
+    local shortestDistance = 30000
+    local fireExists = #fires > 0
+    local dist = 0
+    local fireForcePower = 0.05
+
+    if fireExists then
+        for fire in all(fires) do
+            dist = distanceToPoint(person, fire)
+            if dist < shortestDistance then
+                closestFire = fire
+                shortestDistance = dist
+            end
+        end
+    
+        person.dx = 1 * (person.x - closestFire.x) * fireForcePower
+        person.dy = 1 * (person.y - closestFire.y) * fireForcePower
+    else
+        --do nothing
+    end
+
+end
+
+--for when they are burning
+function seekWater(person)
+    --here
+end
+
+
+
+
+
+
+
+
+
+
+
 
 
 
