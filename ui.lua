@@ -8,30 +8,24 @@ tabSpacing = 20
 
 tabs = {
     {
-        icon = 1, onClick = function()
+        icon = 67, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
             showNewDialogue("test message")
         end
     },
     {
-        icon = 2, onClick = function()
+        icon = 68, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
             showNewDialogue("test message...\nwith a second line!!")
         end
     },
     {
-        icon = 3, onClick = function()
+        icon = 69, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
             showNewDialogue("test message...\nwith a second line......\nand a third line???")
-        end
-    },
-    {
-        icon = 4, onClick = function()
-            local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
         end
     }
 }
@@ -49,7 +43,7 @@ function drawDialogue()
                 spr(spriteNumber, x * 8, y * 8 + 130 - dialoguePosition)
             end
         end
-        print(dialogue, 4, 134 - dialoguePosition, 0)
+        print(dialogue, 8, 134 - dialoguePosition,1)
     end
 end
 
@@ -85,7 +79,6 @@ function drawButtons()
         local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
         local isHovering = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
         local isPressed = tab == pressedTab
-        local color = 13
         if not isHovering then
             y-=2
         end
