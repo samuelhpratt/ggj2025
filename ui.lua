@@ -1,4 +1,4 @@
-dialogue = {}
+dialogue = ""
 dialogueVisibleTimer = 0
 dialogueHeight = nil
 dialoguePosition = 0 -- 0 is offscreen, up to whatever height the text is
@@ -8,30 +8,30 @@ pressedButton = nil
 buttons = {
     {
         x = 2, y = 0, w = 10, h = 8, onClick = function()
-            spawnObject(rnd(50) - 25, rnd(50) - 25, 50, "food")
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnObject(x, y, domeRadius - sqrt(x*x + y*y) / 2, "food")
         end
     },
     {
         x = 30, y = 0, w = 10, h = 8, onClick = function()
-            showNewDialogue("button 2 pressed!")
+            showNewDialogue("button 2 pressed!\nasdas")
         end
     }
 }
 
 function drawDialogue()
     rectfill(0, 128 - dialoguePosition, 128, 128, 6)
-    for i, line in ipairs(dialogue) do
-        print(line, 2, 130 - dialoguePosition + (i - 1) * lineHeight, 0)
-    end
+    print(dialogue, 2, 130 - dialoguePosition, 0)
 end
 
 function updateDialogue()
-    if #dialogue == 0 then
+    if dialogue == nil then
         return
     end
 
     if dialogueVisibleTimer > 0 then
-        if dialoguePosition < #dialogue * lineHeight + 3 then
+        local _, dialogueHeight = print(dialogue, 999, 0)
+        if dialoguePosition < dialogueHeight + 2 then
             dialoguePosition += 3
         else
             dialogueVisibleTimer -= 1
@@ -44,11 +44,8 @@ function updateDialogue()
     end
 end
 
-function showNewDialogue(line1, line2)
-    dialogue = { line1 }
-    if line2 then
-        add(dialogue, line2)
-    end
+function showNewDialogue(text)
+    dialogue = text
     dialoguePosition = 0
     dialogueVisibleTimer = 40
 end
