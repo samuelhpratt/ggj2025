@@ -31,6 +31,19 @@ function spawnDroplet(x, y, z)
                 if puddle then
                     puddle.r += 1 / max(puddle.r / 3, 0.5)
 
+                    for fire in all(fires) do
+                        if (fire.x - puddle.x) * (fire.x - puddle.x)
+                                + (fire.y - puddle.y) * (fire.y - puddle.y)
+                                < puddle.r * puddle.r then
+                            fire.age -= 100
+                            
+                            spawnSmoke(fire.x + rnd(6) - 3, fire.y, 6, 6)
+
+                            -- delete self
+                            del(objects, self)
+                        end
+                    end
+
                     -- check if puddle needs to move etc
                     for otherPuddle in all(puddles) do
                         if otherPuddle ~= puddle then
@@ -71,7 +84,8 @@ function spawnDroplet(x, y, z)
                             + (fire.y - self.y) * (fire.y - self.y)
                             < 25 then
                         fire.age -= 100
-                        -- todo: steam particle here?
+
+                        spawnSmoke(fire.x + rnd(6) - 3, fire.y, 6, 6)
 
                         -- delete self
                         del(objects, self)
@@ -84,7 +98,8 @@ function spawnDroplet(x, y, z)
                                 + (person.y - self.y) * (person.y - self.y))
                             < 25 then
                         person.burning -= 100
-                        -- todo: steam particle here?
+                        
+                        spawnSmoke(person.x + rnd(6) - 3, person.y, 12, 6)
 
                         -- delete self
                         del(objects, self)
@@ -99,10 +114,9 @@ end
 
 function spawnPuddle(x, y)
     local puddle = spawnObject(x, y, 0)
-    puddle.r = 0
+    puddle.r = 1
     -- remove from objects since we want to draw them seperately
     del(objects, puddle)
-
     add(puddles, puddle)
 end
 
@@ -115,6 +129,15 @@ function drawPuddles()
 
         if width >= 1 then
             ovalfill(x - width, y - width * domeAngle, x + width + 1, y + width * domeAngle, 13)
+        end
+    end
+end
+
+function updatePuddles()
+    for puddle in all(puddles) do
+        puddle.r -= 0.005
+        if puddle.r < 0 then
+            del(puddles, puddle)
         end
     end
 end

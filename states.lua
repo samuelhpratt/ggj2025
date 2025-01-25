@@ -21,14 +21,13 @@ function updateWorldInfo()
 
     for object in all(objects) do
         if object.sprite == objectSprites.person then
-            if object.fire > 0 then
+            if object.burning > 0 then
                 peopleFires = true
             end
         end
     end
 
     thereIsFire = environmentFires or peopleFires
-    log("env:"..tostr(#fires))
 
     --[[
     --food?
