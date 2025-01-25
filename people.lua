@@ -1,10 +1,30 @@
 nPeople = 10
 peopleSpeed = 5
 
+
+
+--above the spawnPerson function so can be used
+    function newWaypoint(person)
+        --return waypoint for you to save
+        --doing this way so this function can be used at person init
+        local waypoint = generateWaypoint()
+        while not withinDomeFootprint(waypoint.x, waypoint.y) do
+            waypoint = generateWaypoint()
+        end
+    
+        person.waypoint = waypoint
+    end
+        
+    function generateWaypoint()
+        return {x=flr(rnd(domeRadius*2)) - domeRadius, y=flr(rnd(domeRadius*2)) - domeRadius}
+    end
+
+
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
     person.sprite = flr(rnd(2)) + 2
-    person.color = flr(rnd({8,10,14}))
+    person.color = flr(rnd({8,10,12}))
+    newWaypoint(person)
     -- add any other person-specific parameters here!
 
     function person.draw(self)
@@ -28,31 +48,32 @@ for i = 1, nPeople do
     spawnPerson(rnd(80) - 40, rnd(80) - 40, 0)
 end
 
+
 --helpers
 
-function distanceToObject(objectA, objectB)
-    local dx = objectA.x - objectB.x
-    local dy = objectA.y - objectB.y
+function distanceToPoint(pointA, pointB)
+    --accepts anything with x and y parameters
+    --so accepts an array of {x=10, y=15}
+    --and accepts an object with properties .x and .y
+
+    local dx = pointA.x - pointB.x
+    local dy = pointA.y - pointB.y
     return sqrt(dx ^ 2 + dy ^ 2)
 end
 
 
-
 function weightedMove(person)
 
+    --food
     local closestFood = {x=999, y=999}
     local shortestDistance = 30000
     local foodExists = false
     local dist = 0
     
-    local foodForcePower = 0.01
-    
-    
-
     for object in all(objects) do
         if object.sprite == objectSprites.food then
             foodExists = true
-            dist = distanceToObject(person, object)
+            dist = distanceToPoint(person, object)
             if dist < shortestDistance then
                 closestFood = object
                 shortestDistance = dist
@@ -60,15 +81,32 @@ function weightedMove(person)
         end
     end
 
-    -- log(shortestDistance)
+    --idle waypoints
+    if distanceToPoint(person, person.waypoint) < 3 then
+        newWaypoint(person)
+        --log("new waypoint")
+    end
+
+
+
+    --forces
 
     if foodExists then
-        local finalForce = {(person.x - closestFood.x) * foodForcePower, (person.y - closestFood.y) * foodForcePower}
-        person.dx = -finalForce[1]
-        person.dy = -finalForce[2]
+        foodForcePower = 0.01
     else
-        --do nothing
+        foodForcePower = 0
     end
+
+    waypointForcePower = 0.01
+
+
+    local wfx = (person.x - person.waypoint.x) * waypointForcePower
+    local wfy = (person.y - person.waypoint.y) * waypointForcePower
+    
+    --local finalForce = {(person.x - closestFood.x) * foodForcePower, (person.y - closestFood.y) * foodForcePower}
+    -- negative means they will run towards, positive means they will run away. 
+    person.dx = -wfx
+    person.dy = -wfy
 
 
 end
