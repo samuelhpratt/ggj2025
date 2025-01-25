@@ -30,7 +30,7 @@ function drawObjects()
         spr(
             objectSprites[object.type],
             64 + object.x,
-            domeY - 4 + object.y * domeAngle - object.z * (1 - domeAngle)
+            domeY - 8 + object.y * domeAngle - object.z * (1 - domeAngle)
         )
 
         pal() --clearing palette changes if they were made
