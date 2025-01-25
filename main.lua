@@ -7,6 +7,8 @@ function _draw()
     drawObjects()
     drawUI()
     pset(mouseX, mouseY, 7)
+
+    draw_logs()
 end
 
 function _update()
