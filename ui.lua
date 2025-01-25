@@ -9,7 +9,7 @@ tabSpacing = 20
 tabs = {
     {
         icon = 67, onClick = function()
-            mode = "seeds"
+            mode = "food"
             showNewDialogue("test message")
         end
     },
