@@ -143,20 +143,36 @@ function updateUI()
 end
 
 function drawUI()
-    drawDialogue()
-    drawButtons()
     local mouseSprite = mouseSprites[mouseState]
 
     -- draw lazer
     if mode == "fire" then
-        local x, y = screenPosToCoords(mouseX, mouseY + 30)
+        -- set the screen memory as the spritesheet
+        -- and stretch screen->screen
+        poke(0x5f54, 0x60)
+        palt(0, false)
+        local size = 10, 10
+        local x, y = mouseX - 22, mouseY - 20 -- center
+        sspr(
+            x + size / 2, y + size / 2,
+            size, size,
+            x, y,
+            size * 2, size * 2
+        )
+        poke(0x5f54, 0x00) palt() -- return to defaults
+        pal(14, 0)
         if mouseHeld then
-            line(mouseX - 4, mouseY - 2, 64 + x, domeY + y * domeAngle, rnd { 7, 10 })
+            pal(12, 8)
         end
+        spr(76, x - 3, y - 3, 4, 4)
+        pal()
     end
 
+    drawDialogue()
+    drawButtons()
+
     pal({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
-    if mode then
+    if mode and mode ~= "fire" then
         spr(toolSprites[mode], mouseX - 7, mouseY - 4)
         spr(toolSprites[mode], mouseX - 6, mouseY - 3)
         spr(toolSprites[mode], mouseX - 5, mouseY - 4)
@@ -168,7 +184,7 @@ function drawUI()
     spr(mouseSprite, mouseX - 2, mouseY + 1)
     spr(mouseSprite, mouseX - 1, mouseY)
     pal()
-    if mode then
+    if mode and mode ~= "fire" then
         spr(toolSprites[mode], mouseX - 6, mouseY - 4)
     end
     spr(mouseSprite, mouseX - 2, mouseY)

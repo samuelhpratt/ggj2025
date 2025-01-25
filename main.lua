@@ -23,25 +23,26 @@ function _update()
     if mouseDown then
         toolCooldown = 0
     end
-    if mouseHeld and not pressedTab and mode and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
+    if mouseHeld and not pressedTab and mode then
         local x, y = screenPosToCoords(mouseX, mouseY + 30)
         local z = 30
         if toolCooldown > 0 then
             toolCooldown -= 1
         else
-            if mode == "seeds" then
+            if mode == "seeds" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
                 x += rnd(2) - 1
                 y += rnd(2) - 1
                 --spawnObject(x, y, z, 1)
                 spawnFood(x, y, z)
                 toolCooldown = 4
-            elseif mode == "water" then
+            elseif mode == "water" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
                 x += rnd(10) - 5
                 y += rnd(10) - 5
                 spawnDroplet(x, y, z)
-            elseif mode == "fire" then
-                x += rnd(4) - 2
-                y += rnd(4) - 2
+            elseif mode == "fire" and mouseX > 80 - domeRadius and mouseX < 80 + domeRadius and mouseY - 16 > domeY - domeRadius and mouseY - 16 < domeY + domeRadius * domeAngle then
+                local x, y = screenPosToCoords(mouseX - 12, mouseY - 8)
+                x += rnd(2) - 1
+                y += rnd(2) - 1
                 spawnFire(x, y)
             end
         end

@@ -1,4 +1,4 @@
-domeRadius = 60
+domeRadius = 56
 domeY = 80
 domeAngle = 0.5 -- multiply y values by this when drawing :)
 
