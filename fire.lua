@@ -4,11 +4,12 @@ smoke = {}
 function spawnFire(x, y)
     local fire = spawnObject(x, y, 0)
     -- 20 sec
-    fire.age = 600
+    fire.age = flr(rnd(400)) + 100
 
     function fire.draw(self)
         local x, y = self:getScreenPosition()
         spr(134 + flr(self.age / 2) % 5, x - 4, y - 7)
+        pset(x, y, 3 )
     end
 
     function fire.update(self)
@@ -34,7 +35,6 @@ end
 function spawnSmoke(x, y, z, c)
     local c = c or 5
     local particle = { x = x, y = y, z = z, c = c, age = rnd(60) }
-
     add(smoke, particle)
 end
 
