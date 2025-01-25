@@ -2,7 +2,7 @@ nPeople = 100
 peopleSpeed = 1
 
 for i = 1,nPeople do
-    spawnObject(0, 0, 0, "person")
+    spawnObject(0, 0, 0, "person", flr(rnd(16)))
 end
 
 function updatePeople()

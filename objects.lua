@@ -10,14 +10,30 @@ function drawObjects()
         hat = 4
     }
 
+    local objectExistingColors = {
+        food = nil,
+        person = 7,
+        toy = nil,
+        hat = nil
+    }
+
     sortByY(objects)
 
     for object in all(objects) do
+        
+        --replace colors if they have a replacement color defined
+        if object.replacementColor != nil then
+            pal(objectExistingColors[object.type],object.replacementColor)
+        end
+
+        --draw the sprite
         spr(
             objectSprites[object.type],
             64 + object.x,
             domeY - 4 + object.y * domeAngle - object.z * (1 - domeAngle)
         )
+
+        pal() --clearing palette changes if they were made
     end
 end
 
@@ -52,8 +68,9 @@ function withinDomeFootprint(x, y)
     return dist <= (domeRadius - padding)
 end
 
-function spawnObject(x, y, z, type)
-    local object = { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, type = type }
+function spawnObject(x, y, z, type, replacementColor)
+    replacementColor = replacementColor or nil
+    local object = { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, type = type, replacementColor = replacementColor}
     add(objects, object)
     return object
 end
