@@ -1,16 +1,15 @@
---init people
 nPeople = 100
-peopleSpriteIndex = 2
-domeAICentreX = 65
-domeAICentreY = 65
-domeAIRadius = 30
-people = {}
+peopleSpeed = 1
 
 for i = 1,nPeople do
-    local person = {x=65, y=65} --defined inside so new people created
-    add(people,person)
+    spawnObject(i, i, 0, "person")
 end
 
+
+print(flr(rnd(3)) - 1) -- negative 1 to 1 random
+
+
+--[[
 function updatePeople()
 
     for i = 1,#people do
@@ -21,10 +20,8 @@ end
 
 function drawPeople()
     
-    for i = 1,#people do
-        spr(peopleSpriteIndex,people[i].x,people[i].y)
-    end
-    
+    --do nothing, handled by objects.lua
+
 end
 
 
@@ -64,6 +61,6 @@ function withinDome(x, y)
 
     return dist <= domeAIRadius
 end
-
+]]
 
 
