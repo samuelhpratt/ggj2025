@@ -1,14 +1,21 @@
 poke(0x5F2D, 1) -- enable mouse
-mode = nil
-toolCooldown = 0
 
 function _init()
+    cracking = 0
+    blackScreen = 0
+    broken = false
+    cracks = {}
+    
+    toolCooldown = 0
+    mode = nil
 end
 
 function _draw()
+    cls(0)
+    if blackScreen > 0 then
+        return
+    end
     drawDome()
-    drawObjects()
-    drawSmoke()
     drawUI()
     updateWorldInfo()
     draw_logs()
@@ -20,6 +27,7 @@ function _update()
     updateSmoke()
     updatePuddles()
     updateObjects()
+    updateDome()
     if mouseDown then
         toolCooldown = 0
     end
@@ -50,14 +58,14 @@ function _update()
         if toolCooldown > 0 then
             toolCooldown -= 1
         else
-            if mode == "seeds" and mouseX > 72 - domeRadius and mouseX < 72 + domeRadius and  mouseY + 40 * (1 - domeAngle) > domeY - domeRadius and  mouseY + 40 * (1 - domeAngle) < domeY + domeRadius * domeAngle then
+            if mode == "seeds" and mouseX > 72 - domeRadius and mouseX < 72 + domeRadius and mouseY + 40 * (1 - domeAngle) > domeY - domeRadius and mouseY + 40 * (1 - domeAngle) < domeY + domeRadius * domeAngle then
                 local x, y = screenPosToCoords(mouseX - 10, mouseY + 50 * (1 - domeAngle))
                 x += rnd(2) - 1
                 y += rnd(2) - 1
                 spawnFood(x, y, z)
                 toolCooldown = 4
-            elseif mode == "water" and mouseX > 88 - domeRadius and mouseX < 88 + domeRadius and mouseY + 40 > domeY - domeRadius and mouseY + 40 < domeY + domeRadius * domeAngle then
-                local x, y = screenPosToCoords(mouseX - 24, mouseY + 40)
+            elseif mode == "water" and mouseX > 84 - domeRadius and mouseX < 84 + domeRadius and mouseY + 40 > domeY - domeRadius and mouseY + 40 < domeY + domeRadius * domeAngle then
+                local x, y = screenPosToCoords(mouseX - 20, mouseY + 46)
                 x += rnd(10) - 5
                 y += rnd(10) - 5
                 spawnDroplet(x, y, z)

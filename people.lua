@@ -31,7 +31,7 @@ end
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
     person.sprite = flr(rnd({ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 }))
-    person.color = flr(rnd({ 8, 10, 11 }))
+    person.color = flr(rnd({ 8, 10, 11, 12 }))
     person.burning = 0
     person.inWater = false
     person.state = personStates.idle

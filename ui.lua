@@ -127,8 +127,10 @@ function updateUI()
     mouseHeld = stat(34) > 0
     -- true if the mouse button is held
 
-    updateDialogue()
-    updateButtons()
+    if not broken then
+        updateDialogue()
+        updateButtons()
+    end
 end
 
 function drawUI()
@@ -139,9 +141,9 @@ function drawUI()
         pal(11, 0)
         spr(68, x - 3, y - 3, 4, 4)
     elseif mode == "water" then
-        local x, y = mouseX - 20, mouseY - 18 -- center
+        local x, y = mouseX - 16, mouseY - 16 -- center
         pal(14, 0)
-        spr(72, x - 3, y +16, 4, 4)
+        spr(72, x - 3, y + 16, 4, 4)
     elseif mode == "fire" then
         -- set the screen memory as the spritesheet
         -- and stretch screen->screen
@@ -164,10 +166,12 @@ function drawUI()
         pal()
     end
 
-    drawDialogue()
-    drawButtons()
+    if not broken then
+        drawDialogue()
+        drawButtons()
+    end
 
-    pal{0,0,0,0,0,0,0,0,0,0,0,0,0}
+    pal { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
     spr(mouseSprite, mouseX - 3, mouseY)
     spr(mouseSprite, mouseX - 2, mouseY - 1)
     spr(mouseSprite, mouseX - 2, mouseY + 1)
