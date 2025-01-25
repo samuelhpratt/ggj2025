@@ -22,6 +22,7 @@ function _draw()
     pal()
     spr(mouseSprite, mouseX - 2, mouseY)
     draw_logs()
+    drawLines()
 end
 
 function _update()

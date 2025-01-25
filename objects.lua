@@ -77,12 +77,6 @@ function spawnObject(x, y, z, s)
         return 64 + self.x, domeY + self.y * domeAngle - self.z * (1 - domeAngle)
     end
 
-    object.distanceToObject = function(self, object)
-        local dx = self.x - object.x
-        local dy = self.y - object.y
-        return sqrt(dx ^ 2 + dy ^ 2)
-    end
-
     add(objects, object)
     return object
 end
