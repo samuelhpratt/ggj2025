@@ -62,7 +62,14 @@ function spawnPerson(x, y, z)
             pT += 1
         end
 
-        spr(self.sprite, x - 3, y - 7, 1, h)
+        local flip = false
+        local sprite = self.sprite
+        if abs(self.dx) > 0.075 or abs(self.dy) > 0.075 then
+            sprite += 1
+            flip = flr(t() * 5) % 2 == 0
+        end
+
+        spr(sprite, x - 3, y - 7, 1, h, flip)
         pal()
 
         if self.burning > 0 then

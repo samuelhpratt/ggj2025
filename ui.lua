@@ -6,8 +6,8 @@ lineHeight = 6
 pressedTab = nil
 tabSpacing = 20
 
-mouseSprites = { pointer = 70, open = 71, grab = 72 }
-toolSprites = { seeds = 67, water = 68, fire = 69 }
+mouseSprites = { pointer = 112, open = 113, grab = 114 }
+toolSprites = { seeds = 67, water = 83, fire = 99 }
 
 tabs = {
     {
@@ -20,7 +20,7 @@ tabs = {
         end
     },
     {
-        icon = 68, onClick = function()
+        icon = 83, onClick = function()
             if mode == "water" then
                 mode = nil
             else
@@ -29,7 +29,7 @@ tabs = {
         end
     },
     {
-        icon = 69, onClick = function()
+        icon = 99, onClick = function()
             if mode == "fire" then
                 mode = nil
             else

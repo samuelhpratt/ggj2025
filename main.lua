@@ -32,7 +32,6 @@ function _update()
             if mode == "seeds" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
                 x += rnd(2) - 1
                 y += rnd(2) - 1
-                --spawnObject(x, y, z, 1)
                 spawnFood(x, y, z)
                 toolCooldown = 4
             elseif mode == "water" and mouseX > 64 - domeRadius and mouseX < 64 + domeRadius and mouseY > domeY - domeRadius and mouseY < domeY + domeRadius * domeAngle then
@@ -40,10 +39,25 @@ function _update()
                 y += rnd(10) - 5
                 spawnDroplet(x, y, z)
             elseif mode == "fire" and mouseX > 80 - domeRadius and mouseX < 80 + domeRadius and mouseY - 16 > domeY - domeRadius and mouseY - 16 < domeY + domeRadius * domeAngle then
-                local x, y = screenPosToCoords(mouseX - 12, mouseY - 8)
+                local x, y = screenPosToCoords(mouseX - 12, mouseY - 6)
                 x += rnd(2) - 1
                 y += rnd(2) - 1
-                spawnFire(x, y)
+                -- check for puddles first
+                local hitPuddle = false
+                for puddle in all(puddles) do
+                    if (x - puddle.x) * (x - puddle.x)
+                            + (y - puddle.y) * (y - puddle.y)
+                            < (puddle.r + 2) * (puddle.r + 2) then
+                        puddle.r -= 0.05
+
+                        spawnSmoke(x + rnd(6) - 3, y, 6, 6)
+                        hitPuddle = true
+                        break
+                    end
+                end
+                if not hitPuddle then
+                    spawnFire(x, y)
+                end
             end
         end
     end

@@ -9,7 +9,6 @@ function spawnFire(x, y)
     function fire.draw(self)
         local x, y = self:getScreenPosition()
         spr(134 + flr(self.age / 2) % 5, x - 4, y - 7)
-        pset(x, y, 3 )
     end
 
     function fire.update(self)
