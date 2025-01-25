@@ -6,23 +6,35 @@ lineHeight = 6
 pressedTab = nil
 tabSpacing = 20
 
+mouseSprites = { pointer = 70, open = 71, grab = 72 }
+toolSprites = { seeds = 67, water = 68, fire = 69 }
+
 tabs = {
     {
         icon = 67, onClick = function()
-            mode = "seeds"
-            showNewDialogue("test message")
+            if mode == "seeds" then
+                mode = nil
+            else
+                mode = "seeds"
+            end
         end
     },
     {
         icon = 68, onClick = function()
-            mode = "water"
-            showNewDialogue("test message...\nwith a second line!!")
+            if mode == "water" then
+                mode = nil
+            else
+                mode = "water"
+            end
         end
     },
     {
         icon = 69, onClick = function()
-            mode = "fire"
-            showNewDialogue("test message...\nwith a second line......\nand a third line???")
+            if mode == "fire" then
+                mode = nil
+            else
+                mode = "fire"
+            end
         end
     }
 }
@@ -40,7 +52,7 @@ function drawDialogue()
                 spr(spriteNumber, x * 8, y * 8 + 130 - dialoguePosition)
             end
         end
-        print(dialogue, 8, 134 - dialoguePosition,1)
+        print(dialogue, 8, 134 - dialoguePosition, 1)
     end
 end
 
@@ -76,19 +88,24 @@ function drawButtons()
         local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
         local isHovering = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
         local isPressed = tab == pressedTab
-        if not isHovering then
-            y-=2
+        if isHovering and not pressedTab then
+            mouseState = "pointer"
         end
-        -- if isPressed then
-        --     color = 5
-        -- end
+        if not isHovering then
+            y -= 2
+        end
+        if isPressed then
+            pal(7, 6)
+        end
 
         spr(80, x - 2, y - 2)
         spr(82, x + 6, y - 2)
         spr(96, x - 2, y + 6)
         spr(98, x + 6, y + 6)
+        pal()
         spr(tab.icon, x + 2, y + 2)
     end
+    if pressedTab then mouseState = "grab" end
 end
 
 function updateButtons()
@@ -96,7 +113,7 @@ function updateButtons()
     for i, tab in ipairs(tabs) do
         local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
         local isSelected = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
-        
+
         if mouseDown and isSelected then
             pressedTab = tab
         end
@@ -112,6 +129,15 @@ function updateButtons()
 end
 
 function updateUI()
+    mouseState = "open"
+    mouseX, mouseY = stat(32), stat(33)
+    mouseDown = not mouseHeld and stat(34) > 0
+    -- true on the first frame the mouse is pressed
+    mouseUp = mouseHeld and stat(34) == 0
+    -- true on the first frame the mouse is pressed
+    mouseHeld = stat(34) > 0
+    -- true if the mouse button is held
+
     updateDialogue()
     updateButtons()
 end
@@ -119,4 +145,31 @@ end
 function drawUI()
     drawDialogue()
     drawButtons()
+    local mouseSprite = mouseSprites[mouseState]
+
+    -- draw lazer
+    if mode == "fire" then
+        local x, y = screenPosToCoords(mouseX, mouseY + 30)
+        if mouseHeld then
+            line(mouseX - 4, mouseY - 2, 64 + x, domeY + y * domeAngle, rnd { 7, 10 })
+        end
+    end
+
+    pal({ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 })
+    if mode then
+        spr(toolSprites[mode], mouseX - 7, mouseY - 4)
+        spr(toolSprites[mode], mouseX - 6, mouseY - 3)
+        spr(toolSprites[mode], mouseX - 5, mouseY - 4)
+        spr(toolSprites[mode], mouseX - 6, mouseY - 5)
+    end
+
+    spr(mouseSprite, mouseX - 3, mouseY)
+    spr(mouseSprite, mouseX - 2, mouseY - 1)
+    spr(mouseSprite, mouseX - 2, mouseY + 1)
+    spr(mouseSprite, mouseX - 1, mouseY)
+    pal()
+    if mode then
+        spr(toolSprites[mode], mouseX - 6, mouseY - 4)
+    end
+    spr(mouseSprite, mouseX - 2, mouseY)
 end
