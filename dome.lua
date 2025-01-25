@@ -65,10 +65,7 @@ end
 function screenPosToCoords(x, y)
     x, y = x - 64, (y - domeY) / domeAngle
     if x * x + y * y >= (domeRadius - 2) * (domeRadius - 2) then
-        local dist = sqrt(x * x + y * y)
-
-        x *= (domeRadius - 2) / dist
-        y *= (domeRadius - 2) / dist
+        y = sqrt((domeRadius - 2) * (domeRadius - 2) - x * x) * sgn(y)
     end
     return x, y
 end
