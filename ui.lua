@@ -1,27 +1,53 @@
-dialogue = ""
+dialogue = nil
 dialogueVisibleTimer = 0
 dialogueHeight = nil
 dialoguePosition = 0 -- 0 is offscreen, up to whatever height the text is
 lineHeight = 6
-pressedButton = nil
+pressedTab = nil
+tabSpacing = 20
 
-buttons = {
+tabs = {
     {
-        x = 2, y = 0, w = 10, h = 8, onClick = function()
+        icon = 1, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x*x + y*y) / 2, "food")
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "food")
         end
     },
     {
-        x = 30, y = 0, w = 10, h = 8, onClick = function()
-            showNewDialogue("button 2 pressed!\nasdas")
+        icon = 2, onClick = function()
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+        end
+    },
+    {
+        icon = 3, onClick = function()
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+        end
+    },
+    {
+        icon = 4, onClick = function()
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
         end
     }
 }
 
 function drawDialogue()
-    rectfill(0, 128 - dialoguePosition, 128, 128, 6)
-    print(dialogue, 2, 130 - dialoguePosition, 0)
+    if dialogue then
+        for y = 0, ceil(dialogueHeight / 8) do
+            for x = 0, 15 do
+                local spriteNumber = y == 0 and 65 or 81
+                if x == 0 then
+                    spriteNumber -= 1
+                elseif x == 15 then
+                    spriteNumber += 1
+                end
+                spr(spriteNumber, x * 8, y * 8 + 130 - dialoguePosition)
+            end
+        end
+        print(dialogue, 4, 134 - dialoguePosition, 0)
+    end
 end
 
 function updateDialogue()
@@ -30,8 +56,7 @@ function updateDialogue()
     end
 
     if dialogueVisibleTimer > 0 then
-        local _, dialogueHeight = print(dialogue, 999, 0)
-        if dialoguePosition < dialogueHeight + 2 then
+        if dialoguePosition < dialogueHeight then
             dialoguePosition += 3
         else
             dialogueVisibleTimer -= 1
@@ -48,39 +73,48 @@ function showNewDialogue(text)
     dialogue = text
     dialoguePosition = 0
     dialogueVisibleTimer = 40
+    local w, h = print(dialogue, 999, 0)
+    dialogueHeight = h + 6
 end
 
 function drawButtons()
-    for button in all(buttons) do
-        local isHovering = mouseX >= button.x and mouseY >= button.y and mouseX <= button.x + button.w and mouseY <= button.y + button.h
-        local isPressed = button == pressedButton
+    for i, tab in ipairs(tabs) do
+        local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
+        local isHovering = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
+        local isPressed = tab == pressedTab
         local color = 13
-        if isHovering then
-            color = 6
+        if not isHovering then
+            y-=2
         end
-        if isPressed then
-            color = 5
-        end
-        rectfill(button.x, button.y, button.x + button.w, button.y + button.h, color)
+        -- if isPressed then
+        --     color = 5
+        -- end
+
+        spr(80, x - 2, y - 2)
+        spr(82, x + 6, y - 2)
+        spr(96, x - 2, y + 6)
+        spr(98, x + 6, y + 6)
+        spr(tab.icon, x + 2, y + 2)
     end
 end
 
 function updateButtons()
     -- check for mouse click interactions
-    for button in all(buttons) do
-        local isSelected = mouseX >= button.x and mouseY >= button.y and mouseX <= button.x + button.w and mouseY <= button.y + button.h
-
+    for i, tab in ipairs(tabs) do
+        local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
+        local isSelected = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
+        
         if mouseDown and isSelected then
-            pressedButton = button
+            pressedTab = tab
         end
 
-        if mouseUp and isSelected and pressedButton == button then
-            button.onClick()
+        if mouseUp and isSelected and pressedTab == tab then
+            tab.onClick()
         end
     end
 
     if mouseUp then
-        pressedButton = nil
+        pressedTab = nil
     end
 end
 

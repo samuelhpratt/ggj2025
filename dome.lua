@@ -31,7 +31,7 @@ function drawDome()
         local y = 70 + 7 * i
         local y1 = domeY - 1 - y * domeAngle
         local y2 = domeY + 2 + y * domeAngle
-        ovalfill(64 - y, y1, 64 + y, y2, 1, bgColor)
+        ovalfill(64 - y, y1, 64 + y, y2, bgColor)
     end
     fillp()
     ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 3)
