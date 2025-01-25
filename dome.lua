@@ -2,7 +2,20 @@ domeRadius = 60
 domeY = 80
 domeAngle = 0.5 -- multiply y values by this when drawing :)
 
-shades={
+ground = {}
+groundTileW = 2
+groundTileH = 5
+groundW = flr(domeRadius / groundTileW)
+groundH = flr(domeRadius / groundTileH)
+
+for i = -groundW, groundW do
+    ground[i] = {}
+    for j = -groundH, groundH do
+        ground[i][j] = rnd({3,4,12,5})
+    end
+end
+
+shades = {
     0b0000000000000000,
     0b1000000000000000,
     0b1000000000100000,
@@ -19,10 +32,10 @@ shades={
     0b1111110111110101,
     0b1111110111110111,
     0b1111111111110111
-   }
+}
 
 function drawDome()
-    domeAngle = (mouseY / 128) * 0.25 + 0.25
+    domeAngle = 0.6 -(mouseY / 128) * 0.3
 
     cls(0)
     -- draw background dither
@@ -35,8 +48,13 @@ function drawDome()
         ovalfill(64 - y, y1, 64 + y, y2, bgColor)
     end
     fillp()
-    ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 3)
-    
+
+    -- draw ground
+    ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 2)
+
+    drawPuddles()
+
+    -- draw glass
     clip(0, 0, 128, domeY)
     circ(64, domeY - 3, domeRadius, 7)
     clip(0, domeY - 1, 128, 128)
