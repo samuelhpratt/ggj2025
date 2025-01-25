@@ -11,7 +11,7 @@ function spawnFood(x, y, z)
             -- simple distance check
             if (person.x - self.x) * (person.x - self.x) + (person.y - self.y) * (person.y - self.y) < 25 then
                 person.happiness += 1
-                log(person.happiness)
+                -- log(person.happiness)
                 del(objects, self)
                 del(foods, self)
             end

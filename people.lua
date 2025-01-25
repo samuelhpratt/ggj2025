@@ -101,6 +101,54 @@ function spawnPerson(x, y, z)
         return rnd(dialogueLines[rnd(options)])
     end
 
+    function person.updatePhysics(self)
+
+        --avoid other people
+        local otherImpPower = 1
+        local otherImpX = 0
+        local otherImpY = 0
+    
+        for other in all(people) do
+            -- simple distance check
+            if (other.x - self.x) * (other.x - self.x) + (other.y - self.y) * (other.y - self.y) < 9 then
+                otherImpX = (other.x - self.x) * otherImpPower
+                otherImpY = (other.y - self.y) * otherImpPower
+            end
+        end
+    
+        self.dx = self.dx - otherImpX
+        self.dy = self.dy - otherImpY
+
+
+        --bounce off dome
+        local domeImpPower = 1.3
+        local newX = self.x + self.dx
+        local newY = self.y + self.dy
+
+        if not withinDomeFootprint(newX, newY) then
+
+            --bounce
+
+            --play sound
+            glassSFX()
+            
+            --bounce direction
+            --if they were going out of the dome at this location, 
+            --then going the opposite from that location would bounce them away
+            local domeImpX = (newX - self.x) * domeImpPower
+            local domeImpY = (newY - self.y) * domeImpPower
+
+            self.x = self.x - domeImpX
+            self.y = self.y - domeImpY
+        else
+            --moves as normal if it didn't bounce off dome
+            self.x = newX
+            self.y = newY
+        end
+
+    end
+
+
     function person.update(self)
         -- add person-specific update logic here
         stateBasedMove(self)
@@ -144,24 +192,6 @@ function distanceToPoint(pointA, pointB)
     local dx = pointA.x - pointB.x
     local dy = pointA.y - pointB.y
     return sqrt(dx ^ 2 + dy ^ 2)
-end
-
---handling movement separately so can push people away from eachother
-function movePerson(person, dx, dy)
-    local impPower = 1
-    local impX = 0
-    local impY = 0
-
-    for other in all(people) do
-        -- simple distance check
-        if (other.x - person.x) * (other.x - person.x) + (other.y - person.y) * (other.y - person.y) < 9 then
-            impX = (other.x - person.x) * impPower
-            impY = (other.y - person.y) * impPower
-        end
-    end
-
-    person.dx = dx - impX
-    person.dy = dy - impY
 end
 
 function stateBasedMove(person)
@@ -211,9 +241,8 @@ function idle(person)
         newWaypoint(person)
     end
 
-    local dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
-    local dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
-    movePerson(person, dx, dy)
+    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
+    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
 end
 
 function getFood(person)
@@ -233,9 +262,8 @@ function getFood(person)
             end
         end
 
-        local dx = -1 * (person.x - closestFood.x) * foodForcePower
-        local dy = -1 * (person.y - closestFood.y) * foodForcePower
-        movePerson(person, dx, dy)
+        person.dx = -1 * (person.x - closestFood.x) * foodForcePower
+        person.dy = -1 * (person.y - closestFood.y) * foodForcePower
     else
         --do nothing
     end
@@ -257,10 +285,9 @@ function fleeFire(person)
                 shortestDistance = dist
             end
         end
-
-        local dx = 1 * (person.x - closestFire.x) * fireForcePower
-        local dy = 1 * (person.y - closestFire.y) * fireForcePower
-        movePerson(person, dx, dy)
+    
+        person.dx = 1 * (person.x - closestFire.x) * fireForcePower
+        person.dy = 1 * (person.y - closestFire.y) * fireForcePower
     else
         --do nothing
     end
