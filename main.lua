@@ -5,8 +5,19 @@ function _draw()
     drawDome()
     drawObjects()
     drawUI()
-    pset(mouseX, mouseY, 7)
-
+    local mouseSprite
+    if mouseHeld then
+        mouseSprite = 72
+    else
+        mouseSprite = 70
+    end
+    pal({0,0,0,0,0,0,0,0,0,0,0,0,0,0})
+    spr(mouseSprite, mouseX-3, mouseY)
+    spr(mouseSprite, mouseX-2, mouseY-1)
+    spr(mouseSprite, mouseX-2, mouseY+1)
+    spr(mouseSprite, mouseX-1, mouseY)
+    pal()
+    spr(mouseSprite, mouseX-2, mouseY)
     draw_logs()
 end
 
