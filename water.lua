@@ -7,16 +7,16 @@ function spawnDroplet(x, y, z)
         local x, y = self:getScreenPosition()
         if self.animation then
             -- draw animation frames
+            spr(131 + self.animation, x - 3, y - 7)
         else
-            pset(x, y, 12)
-            pset(x, y - 1, 12)
+            pset(x, y, 6)
+            pset(x, y - 1, 6)
         end
     end
 
     function droplet.update(self)
         if self.animation then
             self.animation += 1
-
             if self.animation == 3 then
                 -- check if we are near any puddles
                 local puddle = nil
@@ -46,15 +46,14 @@ function spawnDroplet(x, y, z)
                     if domeRadius < puddle.r then
                         puddle.r = domeRadius
                         -- todo: increase depth and fill dome?
-                    else
-                        -- check if puddle fits in the dome
-                        local dist = sqrt(puddle.x * puddle.x + puddle.y * puddle.y)
+                    end
+                    -- check if puddle fits in the dome
+                    local dist = sqrt(puddle.x * puddle.x + puddle.y * puddle.y)
 
-                        if domeRadius < dist + puddle.r then
-                            local newDist = domeRadius - puddle.r
-                            puddle.x *= newDist / dist
-                            puddle.y *= newDist / dist
-                        end
+                    if domeRadius < dist + puddle.r then
+                        local newDist = domeRadius - puddle.r
+                        puddle.x *= newDist / dist
+                        puddle.y *= newDist / dist
                     end
                 else
                     -- create new puddle if one doesn't exist
@@ -67,6 +66,18 @@ function spawnDroplet(x, y, z)
             self:updatePhysics()
             if self.z == 0 then
                 -- landed on ground
+                for fire in all(fires) do
+                    local dist = sqrt((fire.x - self.x) * (fire.x - self.x)
+                            + (fire.y - self.y) * (fire.y - self.y))
+                    if dist < 9 then
+                        fire.age -= 20
+                        -- todo: steam particle here?
+
+                        -- delete self
+                        del(objects, self)
+                    end
+                end
+
                 self.animation = 0
             end
         end
@@ -90,7 +101,7 @@ function drawPuddles()
         local width = puddle.r - 2
 
         if width >= 1 then
-            ovalfill(x - width, y - width * domeAngle, x + width + 1, y + width * domeAngle, 12)
+            ovalfill(x - width, y - width * domeAngle, x + width + 1, y + width * domeAngle, 13)
         end
     end
 end

@@ -1,5 +1,5 @@
 nPeople = 3
-
+people = {}
 
 --above the spawnPerson function so can be used
 function newWaypoint(person)
@@ -12,16 +12,18 @@ function newWaypoint(person)
 
     person.waypoint = waypoint
 end
-    
-function generateWaypoint()
-    return {x=flr(rnd(domeRadius*2)) - domeRadius, y=flr(rnd(domeRadius*2)) - domeRadius}
-end
 
+function generateWaypoint()
+    return { x = flr(rnd(domeRadius * 2)) - domeRadius, y = flr(rnd(domeRadius * 2)) - domeRadius }
+end
 
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
     person.sprite = flr(rnd({2,5,8,11,18}))
     person.color = flr(rnd({8,10,11}))
+    person.burning = 0
+    person.inWater = false
+
     newWaypoint(person)
     -- add any other person-specific parameters here!
 
@@ -29,22 +31,46 @@ function spawnPerson(x, y, z)
         local x, y = self:getScreenPosition()
         -- add person-specific draw logic here
         pal(7, self.color)
-        spr(self.sprite, x, y - 8)
+        local h = 1
+        if self.wet > 0 then
+            y += self.wet
+            h = 0.875
+        end
+        spr(self.sprite, x - 3, y - 7, 1, h)
         pal()
+
+        if self.burning > 0 then
+            spr(134 + flr(self.burning / 2) % 5, x - 4, y - 12)
+        end
     end
 
     function person.update(self)
         -- add person-specific update logic here
         stateBasedMove(self)
 
+        if self.burning > 0 then
+            self.burning -= 1
+        end
+
         self:updatePhysics()
+        
+        -- check if in any puddles
+        self.wet = 0
+        for puddle in all(puddles) do
+            local dist = (puddle.x - self.x) * (puddle.x - self.x) + (puddle.y - self.y) * (puddle.y - self.y)
+            if puddle.r > 3 and dist < (puddle.r - 2) * (puddle.r - 2) then
+                self.wet = max(self.wet, puddle.r - dist > 5 and 2 or 1)
+                self.burning = 0
+            end
+        end
     end
+
+    add(people, person)
 end
 
 for i = 1, nPeople do
     spawnPerson(rnd(80) - 40, rnd(80) - 40, 0)
 end
-
 
 --helpers
 
@@ -57,7 +83,6 @@ function distanceToPoint(pointA, pointB)
     local dy = pointA.y - pointB.y
     return sqrt(dx ^ 2 + dy ^ 2)
 end
-
 
 
 
@@ -86,11 +111,11 @@ end
 function getFood(person)
 
     --food
-    local closestFood = {x=999, y=999}
+    local closestFood = { x = 999, y = 999 }
     local shortestDistance = 30000
     local foodExists = false
     local dist = 0
-    
+
     for object in all(objects) do
         if object.sprite == objectSprites.food then
             foodExists = true

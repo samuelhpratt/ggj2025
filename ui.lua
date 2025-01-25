@@ -9,22 +9,19 @@ tabSpacing = 20
 tabs = {
     {
         icon = 67, onClick = function()
-            local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
+            mode = "seeds"
             showNewDialogue("test message")
         end
     },
     {
         icon = 68, onClick = function()
-            local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
+            mode = "water"
             showNewDialogue("test message...\nwith a second line!!")
         end
     },
     {
         icon = 69, onClick = function()
-            local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
+            mode = "fire"
             showNewDialogue("test message...\nwith a second line......\nand a third line???")
         end
     }

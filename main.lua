@@ -1,5 +1,5 @@
 poke(0x5F2D, 1) -- enable mouse
-mode = "water"
+mode = nil
 
 function _init()
 end
@@ -34,10 +34,20 @@ function _update()
     mouseHeld = stat(34) > 0
     -- true if the mouse button is held
 
-    if mode == "water" then
+    if mode == "seeds" then
+        if mouseHeld then
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
+        end
+    elseif mode == "water" then
         if mouseHeld then
             local x, y = rnd(50) - 25, rnd(50) - 25
             spawnDroplet(x, y, domeRadius - sqrt(x * x + y * y) / 2)
+        end
+    elseif mode == "fire" then
+        if mouseHeld then
+            local x, y = rnd(50) - 25, rnd(50) - 25
+            spawnFire(x, y)
         end
     end
 
