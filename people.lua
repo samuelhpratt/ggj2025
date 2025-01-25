@@ -22,7 +22,7 @@ peopleSpeed = 5
 
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
-    person.sprite = flr(rnd(2)) + 2
+    person.sprite = flr(rnd({2,5,8,11,18}))
     person.color = flr(rnd({8,10,11}))
     newWaypoint(person)
     -- add any other person-specific parameters here!
