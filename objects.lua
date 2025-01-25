@@ -19,58 +19,62 @@ function drawObjects()
 
     sortByY(objects)
 
-    for object in all(objects) do
-        
-        --replace colors if they have a replacement color defined
-        if object.replacementColor != nil then
-            pal(objectExistingColors[object.type],object.replacementColor)
-        end
-
-        --draw the sprite
-        spr(
-            objectSprites[object.type],
-            64 + object.x,
-            domeY - 4 + object.y * domeAngle - object.z * (1 - domeAngle)
-        )
-
-        pal() --clearing palette changes if they were made
+    for i,object in ipairs(objects) do
+        object:draw()
     end
 end
 
 function updateObjects()
-    local gravity = .5
     for object in all(objects) do
-        
-        --x & y movement
-        local newX = object.x + object.dx
-        local newY = object.y + object.dy
-        if withinDomeFootprint(newX, newY) then
-            object.x = newX
-            object.y = newY
-        end
-
-        --z movement
-        object.dz -= gravity
-        object.z += object.dz
-        if object.z < 0 then
-            object.z = 0
-            object.dz = 0
-        end
+        object:update()
     end
 end
 
 function withinDomeFootprint(x, y)
     local padding = 5
-    local dx = x - 0 --dome x centre is 0
-    local dy = y - 0 --dome y centre is 0
-    local dist = sqrt(dx^2 + dy^2)
+    local dx = x - 0
+    --dome x centre is 0
+    local dy = y - 0
+    --dome y centre is 0
+    local dist = sqrt(dx ^ 2 + dy ^ 2)
 
     return dist <= (domeRadius - padding)
 end
 
-function spawnObject(x, y, z, type, replacementColor)
-    replacementColor = replacementColor or nil
-    local object = { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, type = type, replacementColor = replacementColor}
+function spawnObject(x, y, z, s)
+    local object = { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, sprite = s }
+
+    object.updatePhysics = function(self)
+        local newX = self.x + self.dx
+        local newY = self.y + self.dy
+        if withinDomeFootprint(newX, newY) then
+            self.x = newX
+            self.y = newY
+        end
+
+        -- gravity
+        self.dz -= .5
+        self.z += self.dz
+        if self.z < 0 then
+            self.z = 0
+            self.dz = 0
+        end
+    end
+
+    object.update = function(self)
+        self:updatePhysics()
+    end
+
+    
+    object.draw = function(self)
+        local x, y = self:getScreenPosition()
+        spr(self.sprite, x, y - 8)
+    end
+
+    object.getScreenPosition = function(self)
+        return 64 + self.x, domeY + self.y * domeAngle - self.z * (1 - domeAngle)
+    end
+
     add(objects, object)
     return object
 end

@@ -24,6 +24,7 @@ shades={
 function drawDome()
     domeAngle = (mouseY / 128) * 0.25 + 0.25
 
+    cls(0)
     -- draw background dither
     local bgColor = 1
     for i = 16, 1, -1 do

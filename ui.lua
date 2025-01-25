@@ -10,28 +10,28 @@ tabs = {
     {
         icon = 1, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "food")
+            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
             showNewDialogue("test message")
         end
     },
     {
         icon = 2, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
             showNewDialogue("test message...\nwith a second line!!")
         end
     },
     {
         icon = 3, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
             showNewDialogue("test message...\nwith a second line......\nand a third line???")
         end
     },
     {
         icon = 4, onClick = function()
             local x, y = rnd(50) - 25, rnd(50) - 25
-            spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, "person")
+            spawnPerson(x, y, domeRadius - sqrt(x * x + y * y) / 2)
         end
     }
 }

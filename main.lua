@@ -2,7 +2,6 @@ function _init()
 end
 
 function _draw()
-    cls(0)
     drawDome()
     drawObjects()
     drawUI()
