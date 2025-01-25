@@ -5,9 +5,9 @@ __lua__
 #include logs.lua
 #include main.lua
 #include dome.lua
+#include objects.lua
 #include people.lua
 #include ui.lua
-#include objects.lua
 poke(0x5F2D, 1) -- enable mouse
 
 __gfx__

@@ -1,69 +1,21 @@
---init people
 nPeople = 100
-peopleSpriteIndex = 2
-domeAICentreX = 65
-domeAICentreY = 65
-domeAIRadius = 30
-people = {}
+peopleSpeed = 1
 
 for i = 1,nPeople do
-    local person = {x=65, y=65} --defined inside so new people created
-    add(people,person)
+    spawnObject(0, 0, 0, "person")
 end
 
 function updatePeople()
-
-    for i = 1,#people do
-        randomMove(people[i])
+    for i = 1,#objects do
+        if objects[i].type == "person" then
+            randomMove(objects[i])
+        else
+            --do nothing
+        end
     end
-        
 end
-
-function drawPeople()
     
-    for i = 1,#people do
-        spr(peopleSpriteIndex,people[i].x,people[i].y)
-    end
-    
+function randomMove(object)
+    object.dx = (flr(rnd(3)) - 1) * peopleSpeed -- random number: -1 to 1 scaled by speed
+    object.dy = (flr(rnd(3)) - 1) * peopleSpeed -- random number: -1 to 1 scaled by speed
 end
-
-
---helpers
-function randomMove(pers)
-    local dir = flr(rnd(4))
-
-    if dir == 0 then //right
-        movePerson(pers, 1, 0)
-    elseif dir == 1 then //down
-        movePerson(pers, 0, 1)
-    elseif dir == 2 then //left 
-        movePerson(pers, -1, 0)
-    elseif dir == 3 then //up 
-        movePerson(pers, 0, -1)
-    else
-        --do nothing
-    end
-end
-
-function movePerson(pers, xMovement, yMovement)
-    local newX = pers.x + xMovement 
-    local newY = pers.y + yMovement 
-
-    if withinDome(newX, newY) then
-        pers.x = newX
-        pers.y = newY
-    else
-        --do nothing
-    end
-end
-
-function withinDome(x, y)
-    local diffX = x - domeAICentreX
-    local diffY = y - domeAICentreY
-    local dist = sqrt(diffX^2 + diffY^2)
-
-    return dist <= domeAIRadius
-end
-
-
-

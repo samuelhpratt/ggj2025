@@ -24,9 +24,17 @@ end
 function updateObjects()
     local gravity = .5
     for object in all(objects) do
+        
+        --x & y movement
+        local newX = object.x + object.dx
+        local newY = object.y + object.dy
+        if withinDomeFootprint(newX, newY) then
+            object.x = newX
+            object.y = newY
+        end
+
+        --z movement
         object.dz -= gravity
-        object.x += object.dx
-        object.y += object.dy
         object.z += object.dz
         if object.z < 0 then
             object.z = 0
@@ -35,8 +43,19 @@ function updateObjects()
     end
 end
 
+function withinDomeFootprint(x, y)
+    local padding = 5
+    local dx = x - 0 --dome x centre is 0
+    local dy = y - 0 --dome y centre is 0
+    local dist = sqrt(dx^2 + dy^2)
+
+    return dist <= (domeRadius - padding)
+end
+
 function spawnObject(x, y, z, type)
-    add(objects, { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, type = type })
+    local object = { x = x, y = y, z = z, dx = 0, dy = 0, dz = 0, type = type }
+    add(objects, object)
+    return object
 end
 
 function sortByY(array)
