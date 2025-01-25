@@ -44,11 +44,12 @@ function updateObjects()
 end
 
 function withinDomeFootprint(x, y)
+    local padding = 5
     local dx = x - 0 --dome x centre is 0
     local dy = y - 0 --dome y centre is 0
     local dist = sqrt(dx^2 + dy^2)
 
-    return dist <= domeRadius
+    return dist <= (domeRadius - padding)
 end
 
 function spawnObject(x, y, z, type)
