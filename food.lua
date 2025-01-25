@@ -7,7 +7,16 @@ function spawnFood(x, y, z)
 
     function food.update(self)
         -- add specific update logic here
-        
+        for person in all(people) do
+            -- simple distance check
+            if (person.x - self.x) * (person.x - self.x) + (person.y - self.y) * (person.y - self.y) < 9 then
+                person.happiness += 1
+                log(person.happiness)
+                del(objects, self)
+                del(foods, self)
+            end
+        end
+
         self:updatePhysics()
     end
 

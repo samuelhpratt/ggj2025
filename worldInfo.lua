@@ -2,14 +2,6 @@
 thereIsFire = false
 thereIsFood = false
 
-function updateStates()
-
-
-    updateWorldInfo()
-
-
-end
-
 function updateWorldInfo()
 
     --fire?

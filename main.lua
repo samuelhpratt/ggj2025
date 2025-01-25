@@ -10,7 +10,7 @@ function _draw()
     drawObjects()
     drawSmoke()
     drawUI()
-    updateStates()
+    updateWorldInfo()
     draw_logs()
     drawLines()
 end
@@ -32,7 +32,8 @@ function _update()
             if mode == "seeds" then
                 x += rnd(2) - 1
                 y += rnd(2) - 1
-                spawnObject(x, y, z, 1)
+                --spawnObject(x, y, z, 1)
+                spawnFood(x, y, z)
                 toolCooldown = 4
             elseif mode == "water" then
                 x += rnd(10) - 5

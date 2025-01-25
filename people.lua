@@ -1,4 +1,4 @@
-nPeople = 3
+nPeople = 10
 people = {}
 
 personStates = {
@@ -7,6 +7,10 @@ personStates = {
     seekWater = 3,
     getFood = 4
 }
+
+--animation helpers
+airborneHop = false
+pT = 0
 
 --above the spawnPerson function so can be used
 function newWaypoint(person)
@@ -31,6 +35,7 @@ function spawnPerson(x, y, z)
     person.burning = 0
     person.inWater = false
     person.state = personStates.idle
+    person.happiness = 0
 
     newWaypoint(person)
     -- add any other person-specific parameters here!
@@ -44,12 +49,29 @@ function spawnPerson(x, y, z)
             y += self.wet
             h = 0.875
         end
+
+        -- check if happy enough to hop
+        if self.happiness >= 2 then
+            if pT == 1 then
+                y += 1
+            elseif pT == 4 then
+                y -= 1
+            elseif pT == 8 then
+                pT = 0
+                --do nothing
+            end
+            pT += 1
+        end
+
         spr(self.sprite, x - 3, y - 7, 1, h)
         pal()
 
         if self.burning > 0 then
             spr(134 + flr(self.burning / 2) % 5, x - 4, y - 12)
         end
+
+
+
     end
 
     function person.update(self)
@@ -71,6 +93,7 @@ function spawnPerson(x, y, z)
                 self.burning = 0
             end
         end
+
     end
 
     add(people, person)
@@ -102,7 +125,7 @@ function stateBasedMove(person)
     * runfromfire
     * rejoiceinrain
     ]]
-    log(person.state)
+    --log(person.state)
 
     if person.state == personStates.idle then
         idle(person)
@@ -157,7 +180,7 @@ function getFood(person)
     local shortestDistance = 30000
     local foodExists = #foods > 0
     local dist = 0
-    local foodForcePower = 0.01
+    local foodForcePower = 0.03
 
     if foodExists then
         for food in all(foods) do
