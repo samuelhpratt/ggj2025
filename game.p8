@@ -2,6 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 -- ggj 2025 - bubble!
+#include logs.lua
 #include main.lua
 #include dome.lua
 #include people.lua
