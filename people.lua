@@ -9,8 +9,7 @@ personStates = {
 }
 
 --animation helpers
-airborneHop = false
-pT = 0
+pT = 0 --person animation time
 
 --above the spawnPerson function so can be used
 function newWaypoint(person)
@@ -115,6 +114,23 @@ function distanceToPoint(pointA, pointB)
     return sqrt(dx ^ 2 + dy ^ 2)
 end
 
+--handling movement separately so can push people away from eachother
+function movePerson(person, dx, dy)
+    local impPower = 1
+    local impX = 0
+    local impY = 0
+
+    for other in all(people) do
+        -- simple distance check
+        if (other.x - person.x) * (other.x - person.x) + (other.y - person.y) * (other.y - person.y) < 9 then
+            impX = (other.x - person.x) * impPower
+            impY = (other.y - person.y) * impPower
+        end
+    end
+
+    person.dx = dx - impX
+    person.dy = dy - impY
+end
 
 function stateBasedMove(person)
 
@@ -152,6 +168,8 @@ function stateBasedMove(person)
         getFood(person)
         if thereIsFire then
             person.state = personStates.fleeFire
+        elseif not thereIsFood then
+            person.state = personStates.idle
         else
             --do nothing
         end
@@ -168,8 +186,9 @@ function idle(person)
         newWaypoint(person)
     end
 
-    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
-    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
+    local dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
+    local dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
+    movePerson(person, dx, dy)
 end
 
 
@@ -191,14 +210,14 @@ function getFood(person)
             end
         end
 
-        person.dx = -1 * (person.x - closestFood.x) * foodForcePower
-        person.dy = -1 * (person.y - closestFood.y) * foodForcePower
+        local dx = -1 * (person.x - closestFood.x) * foodForcePower
+        local dy = -1 * (person.y - closestFood.y) * foodForcePower
+        movePerson(person, dx, dy)
     else
         --do nothing
     end
 
 end
-
 
 
 function fleeFire(person)
@@ -219,8 +238,9 @@ function fleeFire(person)
             end
         end
     
-        person.dx = 1 * (person.x - closestFire.x) * fireForcePower
-        person.dy = 1 * (person.y - closestFire.y) * fireForcePower
+        local dx = 1 * (person.x - closestFire.x) * fireForcePower
+        local dy = 1 * (person.y - closestFire.y) * fireForcePower
+        movePerson(person, dx, dy)
     else
         --do nothing
     end
