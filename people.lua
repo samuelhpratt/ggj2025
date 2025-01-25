@@ -1,5 +1,6 @@
 nPeople = 10
 people = {}
+selectedPerson = nil
 
 personStates = {
     idle = 1,
@@ -29,8 +30,8 @@ end
 
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
-    person.sprite = flr(rnd({2,4,6,8,10,12,14,16,18,20,22}))
-    person.color = flr(rnd({8,10,11}))
+    person.sprite = flr(rnd({ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 }))
+    person.color = flr(rnd({ 8, 10, 11 }))
     person.burning = 0
     person.inWater = false
     person.state = personStates.idle
@@ -41,8 +42,6 @@ function spawnPerson(x, y, z)
 
     function person.draw(self)
         local x, y = self:getScreenPosition()
-        -- add person-specific draw logic here
-        pal(7, self.color)
         local h = 1
         if self.wet > 0 then
             y += self.wet
@@ -69,15 +68,37 @@ function spawnPerson(x, y, z)
             flip = flr(t() * 5) % 2 == 0
         end
 
+        if self == selectedPerson then
+            pal(7, 0)
+
+            -- spr(sprite, x - 4, y - 6, 1, h, flip)
+            spr(sprite, x - 3, y - 6, 1, h, flip)
+            -- spr(sprite, x - 2, y - 6, 1, h, flip)
+            spr(sprite, x - 4, y - 7, 1, h, flip)
+            spr(sprite, x - 2, y - 7, 1, h, flip)
+            -- spr(sprite, x - 4, y - 8, 1, h, flip)
+            spr(sprite, x - 3, y - 8, 1, h, flip)
+            -- spr(sprite, x - 2, y - 8, 1, h, flip)
+        end
+
+        pal(7, self.color)
         spr(sprite, x - 3, y - 7, 1, h, flip)
         pal()
 
         if self.burning > 0 then
             spr(134 + flr(self.burning / 2) % 5, x - 4, y - 12)
         end
+    end
 
-
-
+    function person.getDialogue(self)
+        local options = { "generic" }
+        if self.burning > 0 then
+            options = { "fire" }
+        end
+        if self.wet > 0 then
+            add(options, "water")
+        end
+        return rnd(dialogueLines[rnd(options)])
     end
 
     function person.update(self)
@@ -88,8 +109,13 @@ function spawnPerson(x, y, z)
             self.burning -= 1
         end
 
+        if selectedPerson == self then
+            self.dx = 0
+            self.dy = 0
+        end
+
         self:updatePhysics()
-        
+
         -- check if in any puddles
         self.wet = 0
         for puddle in all(puddles) do
@@ -99,7 +125,6 @@ function spawnPerson(x, y, z)
                 self.burning = 0
             end
         end
-
     end
 
     add(people, person)
@@ -140,7 +165,6 @@ function movePerson(person, dx, dy)
 end
 
 function stateBasedMove(person)
-
     --[[
     states
     * idle
@@ -159,7 +183,6 @@ function stateBasedMove(person)
         else
             --do nothing
         end
-
     elseif person.state == personStates.fleeFire then
         fleeFire(person)
         if not thereIsFire then
@@ -167,10 +190,8 @@ function stateBasedMove(person)
         else
             --do nothing
         end
-
     elseif person.state == personStates.seekWater then
         seekwater(person)
-
     elseif person.state == personStates.getFood then
         getFood(person)
         if thereIsFire then
@@ -181,12 +202,9 @@ function stateBasedMove(person)
             --do nothing
         end
     end
-
 end
 
-
 function idle(person)
-
     local waypointForcePower = 0.01
 
     if distanceToPoint(person, person.waypoint) < 3 then
@@ -198,9 +216,7 @@ function idle(person)
     movePerson(person, dx, dy)
 end
 
-
 function getFood(person)
-
     --food
     local closestFood = { x = 999, y = 999 }
     local shortestDistance = 30000
@@ -223,12 +239,9 @@ function getFood(person)
     else
         --do nothing
     end
-
 end
 
-
 function fleeFire(person)
-
     --fire
     local closestFire = { x = 999, y = 999 }
     local shortestDistance = 30000
@@ -244,14 +257,13 @@ function fleeFire(person)
                 shortestDistance = dist
             end
         end
-    
+
         local dx = 1 * (person.x - closestFire.x) * fireForcePower
         local dy = 1 * (person.y - closestFire.y) * fireForcePower
         movePerson(person, dx, dy)
     else
         --do nothing
     end
-
 end
 
 --for when they are burning
@@ -259,41 +271,25 @@ function seekWater(person)
     --here
 end
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 --below is archive for future use
 
 --keeping this code, because the Unit lets them move at a constant rate instead of speeding up / slowing down
 function unitMove(person)
-    local mag = sqrt(fx^2 + fy^2)
-    local fxUnit = fx / mag 
+    local mag = sqrt(fx ^ 2 + fy ^ 2)
+    local fxUnit = fx / mag
     local fyUnit = fy / mag
 
-    local unitMag = sqrt(fxUnit^2 + fyUnit^2)
+    local unitMag = sqrt(fxUnit ^ 2 + fyUnit ^ 2)
 
     local lineScale = 1.5
     --log(fxUnit.."  "..fyUnit.."  "..unitMag)
-    debugLine(person.x, person.y, (person.x + fxUnit)*lineScale, (person.y + fyUnit)*lineScale)
+    debugLine(person.x, person.y, (person.x + fxUnit) * lineScale, (person.y + fyUnit) * lineScale)
 
     local fxFinal = fxUnit * peopleSpeed
     local fyFinal = fyUnit * peopleSpeed
-    
+
     --local finalForce = {(person.x - closestFood.x) * foodForcePower, (person.y - closestFood.y) * foodForcePower}
-    -- negative means they will run towards, positive means they will run away. 
+    -- negative means they will run towards, positive means they will run away.
     person.dx = fxFinal
     person.dy = fyFinal
 end

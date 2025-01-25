@@ -57,30 +57,21 @@ function drawDialogue()
 end
 
 function updateDialogue()
-    if dialogue == nil then
-        return
-    end
-
-    if dialogueVisibleTimer > 0 then
+    if dialogue == nil and selectedPerson then
+        dialogue = selectedPerson:getDialogue()
+        dialoguePosition = 0
+        local w, h = print(dialogue, 999, 0)
+        dialogueHeight = h + 6
+    elseif dialogue and selectedPerson then
         if dialoguePosition < dialogueHeight then
             dialoguePosition += 3
-        else
-            dialogueVisibleTimer -= 1
         end
-    elseif dialoguePosition > 0 then
+    elseif dialogue and not selectedPerson then
         dialoguePosition -= 3
-        if dialoguePosition == 0 then
-            dialogue = {}
+        if dialoguePosition <= 0 then
+            dialogue = nil
         end
     end
-end
-
-function showNewDialogue(text)
-    dialogue = text
-    dialoguePosition = 0
-    dialogueVisibleTimer = 60
-    local w, h = print(dialogue, 999, 0)
-    dialogueHeight = h + 6
 end
 
 function drawButtons()

@@ -23,6 +23,28 @@ function _update()
     if mouseDown then
         toolCooldown = 0
     end
+
+    if not mouseHeld and mode == "fire" and mouseX > 80 - domeRadius and mouseX < 80 + domeRadius and mouseY - 16 > domeY - domeRadius and mouseY - 16 < domeY + domeRadius * domeAngle then
+        local x, y = screenPosToCoords(mouseX - 12, mouseY - 5)
+        -- find person being looked at
+        local closestDist = 81
+        local closest = nil
+        for person in all(people) do
+            local dist = (person.x - x) * (person.x - x) + (person.y - y) * (person.y - y)
+            if dist < closestDist then
+                closest = person
+                closestDist = dist
+            end
+        end
+        if closest ~= selectedPerson and selectedPerson ~= nil then
+            selectedPerson = nil
+        else
+            selectedPerson = closest
+        end
+    else
+        selectedPerson = nil
+    end
+
     if mouseHeld and not pressedTab and mode then
         local x, y = screenPosToCoords(mouseX, mouseY + 30)
         local z = 30

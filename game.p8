@@ -12,6 +12,7 @@ __lua__
 #include fire.lua
 #include food.lua
 #include ui.lua
+#include dialogue.lua
 #include worldInfo.lua
 
 __gfx__

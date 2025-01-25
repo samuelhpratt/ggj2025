@@ -65,7 +65,6 @@ function spawnObject(x, y, z, s)
     object.update = function(self)
         self:updatePhysics()
     end
-
     
     object.draw = function(self)
         local x, y = self:getScreenPosition()

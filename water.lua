@@ -123,12 +123,12 @@ end
 function drawPuddles()
     for puddle in all(puddles) do
         local x, y = puddle:getScreenPosition()
-        x = ceil(x)
-        y = ceil(y)
+        x = flr(x + 0.5)
+        y = flr(y + 0.5)
         local width = puddle.r - 2
 
         if width >= 1 then
-            ovalfill(x - width, y - width * domeAngle, x + width + 1, y + width * domeAngle, 13)
+            ovalfill(x - width, y - width * domeAngle, x + width, y + width * domeAngle, 13)
         end
     end
 end
