@@ -37,17 +37,23 @@ function _update()
 
     if mode == "seeds" then
         if mouseHeld then
-            local x, y = rnd(50) - 25, rnd(50) - 25
+            local x, y = screenPosToCoords(mouseX, mouseY)
+            x += rnd(2) - 1
+            y += rnd(2) - 1
             spawnObject(x, y, domeRadius - sqrt(x * x + y * y) / 2, 1)
         end
     elseif mode == "water" then
         if mouseHeld then
-            local x, y = rnd(50) - 25, rnd(50) - 25
+            local x, y = screenPosToCoords(mouseX, mouseY)
+            x += rnd(10) - 5
+            y += rnd(10) - 5
             spawnDroplet(x, y, domeRadius - sqrt(x * x + y * y) / 2)
         end
     elseif mode == "fire" then
         if mouseHeld then
-            local x, y = rnd(50) - 25, rnd(50) - 25
+            local x, y = screenPosToCoords(mouseX, mouseY)
+            x += rnd(4) - 2
+            y += rnd(4) - 2
             spawnFire(x, y)
         end
     end

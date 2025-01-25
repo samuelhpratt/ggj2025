@@ -2,7 +2,7 @@ fires = {}
 
 function spawnFire(x, y)
     local fire = spawnObject(x, y, 0)
-    fire.age = 200
+    fire.age = 600  -- 20 sec
 
     function fire.draw(self)
         local x, y = self:getScreenPosition()

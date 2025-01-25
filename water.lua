@@ -67,10 +67,23 @@ function spawnDroplet(x, y, z)
             if self.z == 0 then
                 -- landed on ground
                 for fire in all(fires) do
-                    local dist = sqrt((fire.x - self.x) * (fire.x - self.x)
-                            + (fire.y - self.y) * (fire.y - self.y))
-                    if dist < 9 then
-                        fire.age -= 20
+                    if (fire.x - self.x) * (fire.x - self.x)
+                            + (fire.y - self.y) * (fire.y - self.y)
+                            < 25 then
+                        fire.age -= 100
+                        -- todo: steam particle here?
+
+                        -- delete self
+                        del(objects, self)
+                    end
+                end
+
+                for person in all(people) do
+                    if person.burning > 0
+                            and ((person.x - self.x) * (person.x - self.x)
+                                + (person.y - self.y) * (person.y - self.y))
+                            < 25 then
+                        person.burning -= 100
                         -- todo: steam particle here?
 
                         -- delete self
