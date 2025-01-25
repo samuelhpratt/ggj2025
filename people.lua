@@ -4,7 +4,7 @@ peopleSpeed = 5
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
     person.sprite = flr(rnd(2)) + 2
-    person.color = flr(rnd({8,10,12}))
+    person.color = flr(rnd({8,10,14}))
     -- add any other person-specific parameters here!
 
     function person.draw(self)
@@ -29,8 +29,6 @@ for i = 1, nPeople do
 end
 
 --helpers
-
-
 
 function distanceToObject(objectA, objectB)
     local dx = objectA.x - objectB.x
@@ -62,7 +60,7 @@ function weightedMove(person)
         end
     end
 
-    log(shortestDistance)
+    -- log(shortestDistance)
 
     if foodExists then
         local finalForce = {(person.x - closestFood.x) * foodForcePower, (person.y - closestFood.y) * foodForcePower}
