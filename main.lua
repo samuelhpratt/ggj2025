@@ -26,7 +26,7 @@ function _update()
     mouseDown = not mouseHeld and stat(34) > 0 -- true on the first frame the mouse is pressed
     mouseUp = mouseHeld and stat(34) == 0 -- true on the first frame the mouse is pressed
     mouseHeld = stat(34) > 0 -- true if the mouse button is held
-    updatePeople()
+    --updatePeople()
     updateObjects()
     updateUI()
 end

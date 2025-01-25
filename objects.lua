@@ -2,13 +2,15 @@
 -- 0, 0, 0 is the center of the dome
 objects = {}
 
+--making public so can use as dictionary in my peoples code
+objectSprites = {
+    food = 1,
+    person = 2,
+    toy = 3,
+    hat = 4
+}
+
 function drawObjects()
-    local objectSprites = {
-        food = 1,
-        person = 2,
-        toy = 3,
-        hat = 4
-    }
 
     local objectExistingColors = {
         food = nil,
@@ -73,6 +75,12 @@ function spawnObject(x, y, z, s)
 
     object.getScreenPosition = function(self)
         return 64 + self.x, domeY + self.y * domeAngle - self.z * (1 - domeAngle)
+    end
+
+    object.distanceToObject = function(self, object)
+        local dx = self.x - object.x
+        local dy = self.y - object.y
+        return sqrt(dx ^ 2 + dy ^ 2)
     end
 
     add(objects, object)
