@@ -1,6 +1,13 @@
 nPeople = 3
 people = {}
 
+personStates = {
+    idle = 1,
+    fleeFire = 2,
+    seekWater = 3,
+    getFood = 4
+}
+
 --above the spawnPerson function so can be used
 function newWaypoint(person)
     --return waypoint for you to save
@@ -23,6 +30,7 @@ function spawnPerson(x, y, z)
     person.color = flr(rnd({8,10,11}))
     person.burning = 0
     person.inWater = false
+    person.state = personStates.idle
 
     newWaypoint(person)
     -- add any other person-specific parameters here!
@@ -85,7 +93,6 @@ function distanceToPoint(pointA, pointB)
 end
 
 
-
 function stateBasedMove(person)
 
     --[[
@@ -95,20 +102,52 @@ function stateBasedMove(person)
     * runfromfire
     * rejoiceinrain
     ]]
+    log(person.state)
 
-    --getfood
-    --getFood(person)
+    if person.state == personStates.idle then
+        idle(person)
+        if thereIsFire then
+            person.state = personStates.fleeFire
+        elseif thereIsFood then
+            person.state = personStates.getFood
+        else
+            --do nothing
+        end
 
-    --idle
-    --idle(person)
+    elseif person.state == personStates.fleeFire then
+        fleeFire(person)
+        if not thereIsFire then
+            person.state = personStates.idle
+        else
+            --do nothing
+        end
 
-    --flee from fire
-    fleeFromFire(person)
+    elseif person.state == personStates.seekWater then
+        seekwater(person)
 
-
+    elseif person.state == personStates.getFood then
+        getFood(person)
+        if thereIsFire then
+            person.state = personStates.fleeFire
+        else
+            --do nothing
+        end
+    end
 
 end
 
+
+function idle(person)
+
+    local waypointForcePower = 0.01
+
+    if distanceToPoint(person, person.waypoint) < 3 then
+        newWaypoint(person)
+    end
+
+    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
+    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
+end
 
 
 function getFood(person)
@@ -139,7 +178,7 @@ end
 
 
 
-function fleeFromFire(person)
+function fleeFire(person)
 
     --fire
     local closestFire = { x = 999, y = 999 }
@@ -166,22 +205,12 @@ function fleeFromFire(person)
 end
 
 --for when they are burning
-function runToWater(person)
+function seekWater(person)
     --here
 end
 
 
-function idle(person)
 
-    local waypointForcePower = 0.01
-
-    if distanceToPoint(person, person.waypoint) < 3 then
-        newWaypoint(person)
-    end
-
-    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
-    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
-end
 
 
 
