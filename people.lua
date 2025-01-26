@@ -38,7 +38,7 @@ function spawnPerson(x, y, z)
     person.wet = 0
     person.state = personStates.idle
     person.happiness = 0
-    person.health = 10
+    person.health = 100
     person.dx = 0
     person.dy = 0
     -- add any other person-specific parameters here!
@@ -175,6 +175,7 @@ function spawnPerson(x, y, z)
         -- dead?
         if self.health <= 0 then
             --dead
+            sfx(50)
             del(objects, self)
             del(people, self)
         end
@@ -198,7 +199,7 @@ function spawnPerson(x, y, z)
 
         self:updatePhysics()
 
-        -- check if happy enough to hop
+        -- check if happy enough to hop & split
         if self.happiness >= 2 and self.dx == 0 and self.dy == 0 and self.z == -self.wet then
             if self.happiness >= 3 and rnd() > 0.5 then
                 self:split()

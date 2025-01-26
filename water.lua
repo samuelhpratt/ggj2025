@@ -1,5 +1,6 @@
 function spawnDroplet(x, y, z)
     local droplet = spawnObject(x, y, z)
+    sfx (53)
 
     function droplet.draw(self)
         local x, y = self:getScreenPosition()
