@@ -10,7 +10,6 @@ function _draw()
     drawObjects()
     drawSmoke()
     drawUI()
-    updateWorldInfo()
     draw_logs()
     drawLines()
 end
@@ -20,6 +19,9 @@ function _update()
     updateSmoke()
     updatePuddles()
     updateObjects()
+    updateTracks()
+    sfxUpdate()
+    updateWorldInfo()
     if mouseDown then
         toolCooldown = 0
     end

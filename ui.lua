@@ -159,6 +159,7 @@ function drawUI()
         pal(14, 0)
         if mouseHeld then
             pal(12, 8)
+            fireTrack:requestPlay()
         end
         spr(76, x - 3, y - 3, 4, 4)
         pal()

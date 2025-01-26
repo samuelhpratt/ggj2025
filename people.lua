@@ -63,9 +63,12 @@ function spawnPerson(x, y, z)
 
         local flip = false
         local sprite = self.sprite
+        --check for walking
         if abs(self.dx) > 0.075 or abs(self.dy) > 0.075 then
             sprite += 1
             flip = flr(t() * 5) % 2 == 0
+            --log("steps requested")
+            --steps:requestPlay()
         end
 
         if self == selectedPerson then
@@ -127,7 +130,7 @@ function spawnPerson(x, y, z)
             --bounce
 
             --play sound
-            glassSFX()
+            --tink:requestPlay()
 
             --bounce direction
             --if they were going out of the dome at this location,

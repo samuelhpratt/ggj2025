@@ -19,6 +19,10 @@ function updateWorldInfo()
 
     thereIsFire = environmentFires or peopleFires
 
+    if thereIsFire then
+        --fireTrack:requestPlay()
+    end
+
     --log("env:"..tostr(environmentFires).." pers:"..tostr(peopleFires))
 
     
