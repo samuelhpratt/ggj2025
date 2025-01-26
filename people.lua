@@ -1,6 +1,7 @@
 nPeople = 5
 people = {}
 selectedPerson = nil
+foodRange = 8
 
 personStates = {
     idle = 1,
@@ -147,6 +148,7 @@ function spawnPerson(x, y, z)
 
             --play sound
             --tink:requestPlay()
+        end
 
         self.dz -= .5
         self.z += self.dz
@@ -181,6 +183,13 @@ function spawnPerson(x, y, z)
             self.dz = 3
         end
 
+        -- check if happy enough to duplicate
+        if self.happiness >= 2 then
+            if rnd(1) > 0.99 then
+                self:split()
+            end
+        end 
+
         -- check if in any puddles
         self.wet = 0
         for puddle in all(puddles) do
@@ -192,7 +201,19 @@ function spawnPerson(x, y, z)
         end
     end
 
+    function person.split(self)
+        local a = spawnPerson(self.x, self.y, 0)
+        local b = spawnPerson(self.x, self.y, 0)
+        a.dz = 3
+        a.dy = -5
+        b.dz = 3
+        b.dy = 5
+        del(objects, self)
+        del(people, self)
+    end
+
     add(people, person)
+    return person
 end
 
 for i = 1, nPeople do
@@ -200,7 +221,6 @@ for i = 1, nPeople do
 end
 
 --helpers
-
 function distanceToPoint(pointA, pointB)
     --accepts anything with x and y parameters
     --so accepts an array of {x=10, y=15}
@@ -287,7 +307,7 @@ function getFood(person)
     end
 
     if closestFood then
-        if closestDist < 2 then
+        if closestDist < foodRange then
             person.happiness += 1
             del(objects, closestFood)
             del(foods, closestFood)
