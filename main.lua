@@ -1,4 +1,5 @@
 poke(0x5F2D, 1) -- enable mouse
+music(0)
 
 function _init()
     cracking = 0
