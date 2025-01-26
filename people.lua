@@ -38,6 +38,7 @@ function spawnPerson(x, y, z)
     person.wet = 0
     person.state = personStates.idle
     person.happiness = 0
+    person.health = 10
     person.dx = 0
     person.dy = 0
     -- add any other person-specific parameters here!
@@ -171,15 +172,25 @@ function spawnPerson(x, y, z)
         -- add person-specific update logic here
         stateBasedMove(self)
 
+        -- dead?
+        if self.health <= 0 then
+            --dead
+            del(objects, self)
+            del(people, self)
+        end
+        
+        -- burning
         if self.burning > 0 then
             self.burning -= 1
-
+            self.health -= 1
+            
             person.happiness -= 1
             if person.happiness < -2 then
                 person.happiness = -2
             end
         end
 
+        -- stop when looked at by hourglass
         if selectedPerson == self then
             self.dx = 0
             self.dy = 0
