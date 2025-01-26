@@ -3,7 +3,6 @@
 objects = {}
 
 function drawObjects()
-
     local objectSprites = {
         food = 1,
         person = 2,
@@ -20,7 +19,7 @@ function drawObjects()
 
     sortByY(objects)
 
-    for i,object in ipairs(objects) do
+    for i, object in ipairs(objects) do
         object:draw()
     end
 end
@@ -31,15 +30,9 @@ function updateObjects()
     end
 end
 
+domePadding = 5
 function withinDomeFootprint(x, y)
-    local padding = 5
-    local dx = x - 0
-    --dome x centre is 0
-    local dy = y - 0
-    --dome y centre is 0
-    local dist = sqrt(dx ^ 2 + dy ^ 2)
-
-    return dist <= (domeRadius - padding)
+    return x * x + y * y < (domeRadius - domePadding) * (domeRadius - domePadding)
 end
 
 function spawnObject(x, y, z, s)
@@ -65,7 +58,7 @@ function spawnObject(x, y, z, s)
     object.update = function(self)
         self:updatePhysics()
     end
-    
+
     object.draw = function(self)
         local x, y = self:getScreenPosition()
         spr(self.sprite, x, y - 8)
