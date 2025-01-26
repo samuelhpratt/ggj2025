@@ -1,4 +1,5 @@
 function spawnFire(x, y)
+    sfx(51)
     local fire = spawnObject(x, y, 0)
     -- 20 sec
     fire.age = flr(rnd(400)) + 100
