@@ -24,6 +24,8 @@ shades = {
 function drawDome()
     domeAngle = 0.5 - (mouseY / 128) * 0.2
 
+    domeY = 80 + offset
+
     -- draw background dither
     local bgColor = 1
     for i = 16, 1, -1 do
@@ -147,6 +149,15 @@ function updateDome()
         blackScreen -= 1
         if blackScreen == 30 then
             --todo: smash sfx
+        end
+
+        if blackScreen == 0 then
+            endingCountdown = 60
+            if #people == 1 then
+                endingText = "1 mikkel escaped."
+            else
+                endingText = #people.." mikkes escaped."
+            end
         end
     end
 end

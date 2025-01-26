@@ -30,5 +30,8 @@ function updateWorldInfo()
     thereIsFood = #foods > 0
     --log("foods:"..tostr(thereIsFood))
 
-
+    if #people == 0 and not endingText then
+        endingCountdown = 60
+        endingText = "no mikkels remain."
+    end
 end
