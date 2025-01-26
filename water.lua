@@ -1,6 +1,6 @@
 function spawnDroplet(x, y, z)
     local droplet = spawnObject(x, y, z)
-    sfx (53)
+    sfx(53)
 
     function droplet.draw(self)
         local x, y = self:getScreenPosition()
@@ -35,8 +35,9 @@ function spawnDroplet(x, y, z)
                                 + (fire.y - puddle.y) * (fire.y - puddle.y)
                                 < puddle.r * puddle.r then
                             fire.age -= 100
-                            
+
                             spawnSmoke(fire.x + rnd(6) - 3, fire.y, 6, 6)
+                            sfx(57)
 
                             -- delete self
                             del(objects, self)
@@ -85,9 +86,10 @@ function spawnDroplet(x, y, z)
                         fire.age -= 100
 
                         spawnSmoke(fire.x + rnd(6) - 3, fire.y, 6, 6)
-
+                        sfx(57)
                         -- delete self
                         del(objects, self)
+                        return
                     end
                 end
 
@@ -97,13 +99,16 @@ function spawnDroplet(x, y, z)
                                 + (person.y - self.y) * (person.y - self.y))
                             < 25 then
                         person.burning -= 100
-                        
-                        spawnSmoke(person.x + rnd(6) - 3, person.y, 12, 6)
 
+                        spawnSmoke(person.x + rnd(6) - 3, person.y, 12, 6)
+                        sfx(57)
                         -- delete self
                         del(objects, self)
+                        return
                     end
                 end
+
+                sfx(53)
 
                 self.animation = 0
             end

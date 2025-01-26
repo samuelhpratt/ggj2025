@@ -87,6 +87,7 @@ function addCrack()
     local crack = { x, y, 1 }
     add(cracks, crack)
     shake += 1
+    sfx(56)
     return crack
 end
 
@@ -111,6 +112,7 @@ function expandCrack(crack)
         add(crack, y)
         add(crack, -z)
         shake += 1
+        sfx(56)
     end
 end
 
@@ -147,8 +149,8 @@ function updateDome()
     end
     if blackScreen > 0 then
         blackScreen -= 1
-        if blackScreen == 30 then
-            --todo: smash sfx
+        if blackScreen == 40 then
+            sfx(55)
         end
 
         if blackScreen == 0 then

@@ -176,6 +176,10 @@ function spawnPerson(x, y, z)
         if self.health <= 0 then
             --dead
             sfx(50)
+            
+            for i=1,20 do
+                spawnSmoke(self.x + rnd(4) - 2, self.y + rnd(4) - 2, rnd(2,6), rnd({self.color,7}))
+            end
             del(objects, self)
             del(people, self)
         end
