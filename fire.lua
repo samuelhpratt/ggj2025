@@ -1,6 +1,3 @@
-fires = {}
-smoke = {}
-
 function spawnFire(x, y)
     local fire = spawnObject(x, y, 0)
     -- 20 sec

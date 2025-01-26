@@ -1,6 +1,3 @@
-nPeople = 5
-people = {}
-selectedPerson = nil
 foodRange = 8
 
 personStates = {
@@ -26,7 +23,11 @@ function newWaypoint(person)
 end
 
 function generateWaypoint()
-    return { x = flr(rnd(domeRadius * 2)) - domeRadius, y = flr(rnd(domeRadius * 2)) - domeRadius }
+    local radius = domeRadius
+    if broken then
+        radius = domeRadius * 3
+    end
+    return { x = flr(rnd(radius * 2)) - radius, y = flr(rnd(domeRadius * 2)) - domeRadius }
 end
 
 function spawnPerson(x, y, z)
@@ -34,7 +35,7 @@ function spawnPerson(x, y, z)
     person.sprite = flr(rnd { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 })
     person.color = flr(rnd { 8, 10, 11, 12 })
     person.burning = 0
-    person.inWater = false
+    person.wet = 0
     person.state = personStates.idle
     person.happiness = 0
     person.health = 10
@@ -45,9 +46,8 @@ function spawnPerson(x, y, z)
     function person.draw(self)
         local x, y = self:getScreenPosition()
         local h = 1
-        if self.wet > 0 then
-            y += self.wet
-            h = 0.875
+        if self.z < 0 then
+            h += 0.125 * self.z
         end
 
         local flip = false
@@ -71,9 +71,6 @@ function spawnPerson(x, y, z)
         pal(7, self.color)
         spr(sprite, x - 3, y - 7, 1, h, flip)
         pal()
-
-        -- debug - show state
-        -- print(person.state, x - 2, y - 12, 0)
 
         if self.burning > 0 then
             spr(134 + flr(self.burning / 2) % 5, x - 4, y - 12)
@@ -165,8 +162,8 @@ function spawnPerson(x, y, z)
 
         self.dz -= .5
         self.z += self.dz
-        if self.z < 0 then
-            self.z = 0
+        if self.z < -self.wet then
+            self.z = -self.wet
             self.dz = 0
         end
     end
@@ -202,23 +199,20 @@ function spawnPerson(x, y, z)
         self:updatePhysics()
 
         -- check if happy enough to hop
-        if self.happiness >= 2 and self.dx == 0 and self.dy == 0 and self.z == 0 then
-            self.dz = 3
-        end
-
-        -- check if happy enough to duplicate
-        if self.happiness >= 2 then
-            if rnd(1) > 0.99 then
+        if self.happiness >= 2 and self.dx == 0 and self.dy == 0 and self.z == -self.wet then
+            if self.happiness >= 3 and rnd() > 0.5 then
                 self:split()
+            else
+                self.dz = 3
             end
-        end 
+        end
 
         -- check if in any puddles
         self.wet = 0
         for puddle in all(puddles) do
             local dist = (puddle.x - self.x) * (puddle.x - self.x) + (puddle.y - self.y) * (puddle.y - self.y)
             if puddle.r > 3 and dist < (puddle.r - 2) * (puddle.r - 2) then
-                self.wet = max(self.wet, puddle.r - dist > 5 and 2 or 1)
+                self.wet = max(self.wet, puddle.r - dist > 3 and 2 or 1)
                 self.burning = 0
             end
         end
@@ -227,9 +221,9 @@ function spawnPerson(x, y, z)
     function person.split(self)
         local a = spawnPerson(self.x, self.y, 0)
         local b = spawnPerson(self.x, self.y, 0)
-        a.dz = 3
+        a.dz = 4
         a.dy = -5
-        b.dz = 3
+        b.dz = 4
         b.dy = 5
         del(objects, self)
         del(people, self)
@@ -237,10 +231,6 @@ function spawnPerson(x, y, z)
 
     add(people, person)
     return person
-end
-
-for i = 1, nPeople do
-    spawnPerson(rnd(80) - 40, rnd(80) - 40, 0)
 end
 
 --helpers
@@ -262,7 +252,7 @@ function stateBasedMove(person)
     * runfromfire
     * rejoiceinrain
     ]]
-    --log(person.state)
+    -- log(person.state)
 
     if person.state == personStates.idle then
         idle(person)
@@ -295,19 +285,20 @@ function stateBasedMove(person)
 end
 
 function idle(person)
-    local waypointForcePower = 0.01
+    local waypointForcePower = 1
 
     if person.waypoint then
-        person.dx += -1 * (person.x - person.waypoint.x) * waypointForcePower
-        person.dy += -1 * (person.y - person.waypoint.y) * waypointForcePower
-
-        if distanceToPoint(person, person.waypoint) < 3 then
+        local dist = distanceToPoint(person, person.waypoint)
+        if dist < 2 then
             person.waypoint = nil
+        else
+            person.dx += -1 * (person.x - person.waypoint.x) * waypointForcePower / dist
+            person.dy += -1 * (person.y - person.waypoint.y) * waypointForcePower / dist
         end
     else
         person.dx *= 0.5
         person.dy *= 0.5
-        if rnd() < 0.02 then
+        if rnd() < 0.05 then
             newWaypoint(person)
         end
     end
@@ -368,34 +359,4 @@ end
 --for when they are burning
 function seekWater(person)
     --here
-end
-
---below is archive for future use
-
---keeping this code, because the Unit lets them move at a constant rate instead of speeding up / slowing down
-function unitMove(person)
-    local mag = sqrt(fx ^ 2 + fy ^ 2)
-    local fxUnit = fx / mag
-    local fyUnit = fy / mag
-
-    local unitMag = sqrt(fxUnit ^ 2 + fyUnit ^ 2)
-
-    local lineScale = 1.5
-    --log(fxUnit.."  "..fyUnit.."  "..unitMag)
-    debugLine(person.x, person.y, (person.x + fxUnit) * lineScale, (person.y + fyUnit) * lineScale)
-
-    local fxFinal = fxUnit * peopleSpeed
-    local fyFinal = fyUnit * peopleSpeed
-
-    --local finalForce = {(person.x - closestFood.x) * foodForcePower, (person.y - closestFood.y) * foodForcePower}
-    -- negative means they will run towards, positive means they will run away.
-    person.dx = fxFinal
-    person.dy = fyFinal
-end
-
---possibly will use for angry state
-function randomMove(person)
-    -- random numbers: -1 to 1 scaled by speed
-    person.dx = (rnd(2) - 1) * peopleSpeed
-    person.dy = (rnd(2) - 1) * peopleSpeed
 end

@@ -1,6 +1,5 @@
 -- objects have x, y, z position and a type (food, hat, toy etc)
 -- 0, 0, 0 is the center of the dome
-objects = {}
 
 function drawObjects()
     local objectSprites = {
@@ -32,6 +31,7 @@ end
 
 domePadding = 5
 function withinDomeFootprint(x, y)
+    if broken then return abs(y) < domeRadius * 1.5 end
     return x * x + y * y < (domeRadius - domePadding) * (domeRadius - domePadding)
 end
 

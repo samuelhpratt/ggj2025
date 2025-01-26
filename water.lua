@@ -1,5 +1,3 @@
-puddles = {}
-
 function spawnDroplet(x, y, z)
     local droplet = spawnObject(x, y, z)
 
