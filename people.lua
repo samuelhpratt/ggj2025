@@ -92,11 +92,23 @@ function spawnPerson(x, y, z)
 
     function person.getDialogue(self)
         local options = { "generic" }
+        if thereIsFire then
+            add(options, "fireSpace")
+        end
         if self.burning > 0 then
             options = { "fire" }
         end
         if self.wet > 0 then
             add(options, "water")
+        end
+        if thereIsFood then
+            add(options, "foodSpace")
+        end
+        if self.happiness > 0 then
+            add(options, "happy")
+        end
+        if self.happiness < 0 then
+            add(options, "unhappy")
         end
         return rnd(dialogueLines[rnd(options)])
     end
