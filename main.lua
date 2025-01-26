@@ -14,7 +14,7 @@ function _init()
     objects = {}
     people = {}
     selectedPerson = nil
-    -- spawnPerson(0, 0, 0)
+    spawnPerson(0, 0, 0)
 
     fires = {}
     smoke = {}
