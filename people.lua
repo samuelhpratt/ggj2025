@@ -97,7 +97,7 @@ function spawnPerson(x, y, z)
         if self.happiness < 0 then
             add(options, "unhappy")
         end
-        return rnd(dialogueLines[rnd(options)])
+        return rnd(dialogueLines[rnd(options)][self.color])
     end
 
     function person.updatePhysics(self)

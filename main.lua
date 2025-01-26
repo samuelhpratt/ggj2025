@@ -1,6 +1,9 @@
 poke(0x5F2D, 1) -- enable mouse
 music(0)
 
+screen = "title"
+offset = 0
+
 function _init()
     cracking = 0
     blackScreen = 0
@@ -22,9 +25,25 @@ function _init()
 
     toolCooldown = 0
     mode = nil
+
+    started = false
+
+    endingCountdown = 0
+    endingText = nil
 end
 
 function _draw()
+    cls(0)
+    if screen == "title" then
+        drawTitle()
+    elseif screen == "game" then
+        drawGame()
+    end
+
+    draw_logs()
+end
+
+function drawGame()
     cls(0)
     if blackScreen > 0 then
         return
@@ -45,20 +64,57 @@ function _draw()
     drawUI()
 end
 
+function drawTitle()
+    cls(0)
+    camera(0, offset)
+    -- draw background dither
+    local bgColor = 1
+    rectfill(0, 0, 128, 30, 1)
+    for i = 16, 1, -1 do
+        fillp(shades[i])
+        local y = 27 + 3 * i
+        local y1 = y
+        local y2 = y + 3
+        rectfill(0, y1, 128, y2, bgColor)
+    end
+    fillp()
+    spr(192, 0, 4, 16, 4)
+
+    if offset == 0 then
+        print("press ❎ to start", 30, 90, 7)
+    end
+end
+
 function _update()
     updateUI()
+
+    if screen == "title" then
+        if offset == 0 and btnp(5) then
+            started = true
+        end
+        if started then
+            offset += 4
+            if offset >= 128 then
+                screen = "game"
+            end
+        elseif offset > 0 then
+            offset -= 4
+        end
+
+        if not started or offset <= 128 then
+            return
+        end
+    elseif offset > 0 then
+        offset -= 4
+    end
+
     updateSmoke()
     updatePuddles()
     updateObjects()
     updateTracks()
     sfxUpdate()
-    updateWorldInfo()
     updateDome()
     updateWorldInfo()
-
-    if btnp() > 0 then
-        _init()
-    end
 
     if mouseDown then
         toolCooldown = 0

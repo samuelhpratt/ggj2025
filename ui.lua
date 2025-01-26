@@ -75,6 +75,7 @@ end
 function drawButtons()
     for i, tab in ipairs(tabs) do
         local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
+        y -= offset
         local isHovering = mouseX >= x and mouseY >= y and mouseX <= x + 12 and mouseY <= y + 12
         local isPressed = tab == pressedTab
         if isHovering and not pressedTab then
@@ -127,10 +128,34 @@ function updateUI()
     mouseHeld = stat(34) > 0
     -- true if the mouse button is held
 
-    if not broken then
+    if not endingText and not broken and screen == "game" then
         updateDialogue()
         updateButtons()
     end
+
+    if endingCountdown > 0 then
+        endingCountdown -= 1
+    end
+    
+    if endingCountdown <= 0 and endingText then
+        if btnp(5) then
+            _init()
+            offset = 128
+            screen = "title"
+        end
+    end
+end
+
+function printOutlined(text, x, y)
+    print(text, x - 1, y - 1, 0)
+    print(text, x, y - 1, 0)
+    print(text, x + 1, y - 1, 0)
+    print(text, x - 1, y, 0)
+    print(text, x + 1, y, 0)
+    print(text, x - 1, y + 1, 0)
+    print(text, x, y + 1, 0)
+    print(text, x + 1, y + 1, 0)
+    print(text, x, y, 7)
 end
 
 function drawUI()
@@ -166,7 +191,7 @@ function drawUI()
         pal()
     end
 
-    if not broken then
+    if not broken and not endingText then
         drawDialogue()
         drawButtons()
     end
@@ -178,4 +203,10 @@ function drawUI()
     spr(mouseSprite, mouseX - 1, mouseY)
     pal()
     spr(mouseSprite, mouseX - 2, mouseY)
+
+    if endingCountdown < 10 and endingText then
+        printOutlined("experiment over.", 32, 40)
+        printOutlined(endingText, 66 - #endingText * 2, 60)
+        printOutlined("press ❎ to return", 30, 80)
+    end
 end
