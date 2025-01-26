@@ -110,7 +110,26 @@ dialogueLines = {
         "i'm motivated to get my\nsteps in! ... one! i did it!\nki~bbie time!"
     },
     unhappy = {
-
+        -- fanatic unhappy
+        "let me out of here! help,\nsomeone! oh... heh hello\ncreator!",
+        "what more do you want from\nme?!",
+        "i'm converting to cubism.",
+        "if i can't trust you creator,\nwhat's left?",
+        -- gigachad unhappy
+        "i can't lift that's how down\nyou've got me, brah.",
+        "it's hard to bench when\nyou've got the whole dome on\nyour shoulders.",
+        "this dome giga-bytes.",
+        "it's my cheat day brah!\ndon't look at me! stop\nstaring at me!",
+        -- influencer unhappy
+        "top 10 places you don't want\nto live, starting with:\nthe dome!",
+        "it's 1 star from me, and\nonly because 0 isn't an\noption!",
+        "the dome is like hell, but\nwith marketing. that can only be\nbad.",
+        "i do not wish to be\nperceived right now.",
+        -- babygirl unhappy
+        "it's just bad energy all\nround, the vibes are off.",
+        "this is not a very demure,\ncutesy or mindful day you're\ngiving us!",
+        "you've got that rank-a-stank\nenergy, creator~boo!",
+        "i'm done, consider me\ndeceased, i quit!"
     },
     generic = {
         -- fanatic generic
