@@ -84,6 +84,7 @@ function addCrack()
     local x, y = sin(angle) * domeRadius, cos(angle) * domeRadius
     local crack = { x, y, 1 }
     add(cracks, crack)
+    shake += 1
     return crack
 end
 
@@ -107,6 +108,7 @@ function expandCrack(crack)
         add(crack, x)
         add(crack, y)
         add(crack, -z)
+        shake += 1
     end
 end
 
@@ -122,6 +124,7 @@ function updateDome()
             broken = true
             mode = nil
             blackScreen = 60
+            shake = 0
 
             -- replace cracks with glass shards on the ground
             cracks = {}

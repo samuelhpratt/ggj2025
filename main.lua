@@ -6,7 +6,20 @@ function _init()
     blackScreen = 0
     broken = false
     cracks = {}
-    
+    shake = 0
+
+    objects = {}
+    people = {}
+    selectedPerson = nil
+    spawnPerson(0, 0, 0)
+
+    fires = {}
+    smoke = {}
+
+    puddles = {}
+
+    foods = {}
+
     toolCooldown = 0
     mode = nil
 end
@@ -16,10 +29,20 @@ function _draw()
     if blackScreen > 0 then
         return
     end
+
+    -- screen shake
+    local shakex = 1 - rnd(2)
+    local shakey = 1 - rnd(2)
+    shakex *= shake
+    shakey *= shake
+    camera(shakex, shakey)
+    shake = shake * 0.5
+    if (shake < 0.05) shake = 0
     drawDome()
+
+    camera()
+
     drawUI()
-    draw_logs()
-    drawLines()
 end
 
 function _update()
@@ -31,6 +54,12 @@ function _update()
     sfxUpdate()
     updateWorldInfo()
     updateDome()
+    updateWorldInfo()
+
+    if btnp() > 0 then
+        _init()
+    end
+
     if mouseDown then
         toolCooldown = 0
     end
