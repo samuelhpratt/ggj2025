@@ -2,19 +2,6 @@ domeRadius = 56
 domeY = 80
 domeAngle = 0.5 -- multiply y values by this when drawing :)
 
-ground = {}
-groundTileW = 2
-groundTileH = 5
-groundW = flr(domeRadius / groundTileW)
-groundH = flr(domeRadius / groundTileH)
-
-for i = -groundW, groundW do
-    ground[i] = {}
-    for j = -groundH, groundH do
-        ground[i][j] = rnd({3,4,12,5})
-    end
-end
-
 shades = {
     0b0000000000000000,
     0b1000000000000000,
@@ -35,9 +22,8 @@ shades = {
 }
 
 function drawDome()
-    domeAngle = 0.6 -(mouseY / 128) * 0.3
+    domeAngle = 0.5 - (mouseY / 128) * 0.2
 
-    cls(0)
     -- draw background dither
     local bgColor = 1
     for i = 16, 1, -1 do
@@ -50,16 +36,116 @@ function drawDome()
     fillp()
 
     -- draw ground
+    ovalfill(62 - domeRadius, domeY - 2 - domeRadius * domeAngle, 66 + domeRadius, domeY + 2 + domeRadius * domeAngle, 8)
     ovalfill(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 2)
 
     drawPuddles()
 
-    -- draw glass
-    clip(0, 0, 128, domeY)
-    circ(64, domeY - 3, domeRadius, 7)
-    clip(0, domeY - 1, 128, 128)
-    oval(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 7)
-    clip()
+    if broken then
+        color(7)
+        -- draw shards
+        for crack in all(cracks) do
+            line(64 - crack[1], domeY - crack[2] * domeAngle + crack[3] * (1 - domeAngle), 64 - crack[4], domeY - crack[5] * domeAngle + crack[6] * (1 - domeAngle))
+            line(64 - crack[7], domeY - crack[8] * domeAngle + crack[9] * (1 - domeAngle))
+            line(64 - crack[1], domeY - crack[2] * domeAngle + crack[3] * (1 - domeAngle))
+        end
+    end
+
+    drawObjects()
+    drawSmoke()
+
+    if not broken then
+        -- draw cracks
+        color(7)
+        for crack in all(cracks) do
+            if #crack > 3 then
+                line(64 - crack[1], domeY - crack[2] * domeAngle + crack[3] * (1 - domeAngle), 64 - crack[4], domeY - crack[5] * domeAngle + crack[6] * (1 - domeAngle))
+                for i = 7, #crack, 3 do
+                    line(64 - crack[i], domeY - crack[i + 1] * domeAngle + crack[i + 2] * (1 - domeAngle))
+                end
+            end
+        end
+
+        clip(0, domeY - 4, 128, 128)
+        oval(63 - domeRadius, domeY - 1 - domeRadius * domeAngle, 65 + domeRadius, domeY + 1 + domeRadius * domeAngle, 8)
+        oval(62 - domeRadius, domeY - 2 - domeRadius * domeAngle, 66 + domeRadius, domeY + 2 + domeRadius * domeAngle, 8)
+
+        -- draw glass
+        clip(0, 0, 128, domeY)
+        circ(64, domeY - 3, domeRadius, 7)
+        clip(0, domeY - 1, 128, 128)
+        oval(64 - domeRadius, domeY - domeRadius * domeAngle, 64 + domeRadius, domeY + domeRadius * domeAngle, 7)
+        clip()
+    end
+end
+
+function addCrack()
+    local angle = rnd(0.5) + .25
+    local x, y = sin(angle) * domeRadius, cos(angle) * domeRadius
+    local crack = { x, y, 1 }
+    add(cracks, crack)
+    return crack
+end
+
+function expandCrack(crack)
+    if #crack < 15 then
+        -- get last pos
+        local x, y = crack[#crack - 2], crack[#crack - 1]
+        -- move towards center a lil bit
+        local dist = sqrt(x * x + y * y)
+        x -= (x / dist) * rnd(6)
+        y -= (y / dist) * rnd(6)
+        if #crack > 5 then
+            x += rnd(8) - 4
+            y += rnd(8) - 4
+        end
+
+        -- get z
+        dist = sqrt(x * x + y * y)
+        local z = sqrt(domeRadius * domeRadius - dist * dist)
+
+        add(crack, x)
+        add(crack, y)
+        add(crack, -z)
+    end
+end
+
+function updateDome()
+    if cracking > 0 and flr(t() * 10) % 2 == 0 then
+        cracking -= 1
+        if rnd() > #cracks / 12 then
+            addCrack()
+        elseif #cracks > 0 and rnd() > .5 then
+            expandCrack(rnd(cracks))
+        end
+        if cracking <= 0 then
+            broken = true
+            mode = nil
+            blackScreen = 60
+
+            -- replace cracks with glass shards on the ground
+            cracks = {}
+            for i = 1, 20 do
+                local x, y = rnd(domeRadius * 3) - domeRadius * 1.5, rnd(domeRadius * 3) - domeRadius * 1.5
+                while x * x + y * y > (domeRadius * 1.5) * (domeRadius * 1.5) do
+                    x, y = rnd(domeRadius * 3) - domeRadius * 1.5, rnd(domeRadius * 3) - domeRadius * 1.5
+                end
+                local shard = {}
+                for j = 1, 3 do
+                    add(shard, x + rnd(20) - 10)
+                    add(shard, y + rnd(20) - 10)
+                    add(shard, rnd(3))
+                end
+                add(cracks, shard)
+            end
+        end
+    end
+    if blackScreen > 0 then
+        blackScreen -= 1
+        if blackScreen == 30 then
+            --todo: smash sfx
+        end
+    end
 end
 
 function screenPosToCoords(x, y)

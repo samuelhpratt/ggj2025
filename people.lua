@@ -1,4 +1,4 @@
-nPeople = 10
+nPeople = 5
 people = {}
 selectedPerson = nil
 
@@ -30,14 +30,14 @@ end
 
 function spawnPerson(x, y, z)
     local person = spawnObject(x, y, z)
-    person.sprite = flr(rnd({ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 }))
-    person.color = flr(rnd({ 8, 10, 11 }))
+    person.sprite = flr(rnd { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22 })
+    person.color = flr(rnd { 8, 10, 11, 12 })
     person.burning = 0
     person.inWater = false
     person.state = personStates.idle
     person.happiness = 0
-
-    newWaypoint(person)
+    person.dx = 0
+    person.dy = 0
     -- add any other person-specific parameters here!
 
     function person.draw(self)
@@ -48,23 +48,9 @@ function spawnPerson(x, y, z)
             h = 0.875
         end
 
-        -- check if happy enough to hop
-        if self.happiness >= 2 then
-            if pT == 1 then
-                y += 1
-            elseif pT == 4 then
-                y -= 1
-            elseif pT == 8 then
-                pT = 0
-                --do nothing
-            end
-            pT += 1
-        end
-
         local flip = false
         local sprite = self.sprite
-        --check for walking
-        if abs(self.dx) > 0.075 or abs(self.dy) > 0.075 then
+        if abs(self.dx) > 0 or abs(self.dy) > 0 then
             sprite += 1
             flip = flr(t() * 5) % 2 == 0
             --log("steps requested")
@@ -74,19 +60,18 @@ function spawnPerson(x, y, z)
         if self == selectedPerson then
             pal(7, 0)
 
-            -- spr(sprite, x - 4, y - 6, 1, h, flip)
             spr(sprite, x - 3, y - 6, 1, h, flip)
-            -- spr(sprite, x - 2, y - 6, 1, h, flip)
             spr(sprite, x - 4, y - 7, 1, h, flip)
             spr(sprite, x - 2, y - 7, 1, h, flip)
-            -- spr(sprite, x - 4, y - 8, 1, h, flip)
             spr(sprite, x - 3, y - 8, 1, h, flip)
-            -- spr(sprite, x - 2, y - 8, 1, h, flip)
         end
 
         pal(7, self.color)
         spr(sprite, x - 3, y - 7, 1, h, flip)
         pal()
+
+        -- debug - show state
+        -- print(person.state, x - 2, y - 12, 0)
 
         if self.burning > 0 then
             spr(134 + flr(self.burning / 2) % 5, x - 4, y - 12)
@@ -105,45 +90,69 @@ function spawnPerson(x, y, z)
     end
 
     function person.updatePhysics(self)
+        -- friction?
         --avoid other people
         local otherImpPower = 1
-        local otherImpX = 0
-        local otherImpY = 0
 
         for other in all(people) do
             -- simple distance check
-            if (other.x - self.x) * (other.x - self.x) + (other.y - self.y) * (other.y - self.y) < 9 then
-                otherImpX = (other.x - self.x) * otherImpPower
-                otherImpY = (other.y - self.y) * otherImpPower
+            if other ~= self then
+                local dist2 = (other.x - self.x) * (other.x - self.x) + (other.y - self.y) * (other.y - self.y)
+                if dist2 < 25 then
+                    local dist = sqrt(dist2)
+                    self.dx -= (other.x - self.x) * otherImpPower / (dist * dist)
+                    self.dy -= (other.y - self.y) * otherImpPower / (dist * dist)
+                end
             end
         end
 
-        self.dx = self.dx - otherImpX
-        self.dy = self.dy - otherImpY
+        local maxSpeed = 0.5
+        if self.state == personStates.fleeFire then
+            maxSpeed = 1.5
+        end
+        if self.burning > 0 then
+            maxSpeed = 2
+        end
+        if abs(self.dx) > maxSpeed then
+            self.dx = sgn(self.dx) * maxSpeed
+        end
+        if abs(self.dy) > maxSpeed then
+            self.dy = sgn(self.dy) * maxSpeed
+        end
 
-        --bounce off dome
-        local domeImpPower = 1.3
-        local newX = self.x + self.dx
-        local newY = self.y + self.dy
+        if abs(self.dx) < 0.1 then
+            self.dx = 0
+        end
+        if abs(self.dy) < 0.1 then
+            self.dy = 0
+        end
 
-        if not withinDomeFootprint(newX, newY) then
-            --bounce
+        self.x += self.dx
+        self.y += self.dy
+
+        if not withinDomeFootprint(self.x, self.y) then
+            -- if they are going out of the dome, snap them back into it and invert speed
+
+            local dist = sqrt(self.x * self.x + self.y * self.y)
+            local nx, ny = self.x / dist, self.y / dist
+
+            -- bounce off glass
+            local k = -2 * (self.dx * nx + self.dy * ny)
+            self.dx += k * nx
+            self.dy += k * ny
+
+            -- snap inside dome
+            self.x *= (domeRadius - domePadding) / dist
+            self.y *= (domeRadius - domePadding) / dist
 
             --play sound
             --tink:requestPlay()
 
-            --bounce direction
-            --if they were going out of the dome at this location,
-            --then going the opposite from that location would bounce them away
-            local domeImpX = (newX - self.x) * domeImpPower
-            local domeImpY = (newY - self.y) * domeImpPower
-
-            self.x = self.x - domeImpX
-            self.y = self.y - domeImpY
-        else
-            --moves as normal if it didn't bounce off dome
-            self.x = newX
-            self.y = newY
+        self.dz -= .5
+        self.z += self.dz
+        if self.z < 0 then
+            self.z = 0
+            self.dz = 0
         end
     end
 
@@ -153,6 +162,11 @@ function spawnPerson(x, y, z)
 
         if self.burning > 0 then
             self.burning -= 1
+            
+            person.happiness -= 1
+            if person.happiness < -2 then
+                person.happiness = -2
+            end
         end
 
         if selectedPerson == self then
@@ -161,6 +175,11 @@ function spawnPerson(x, y, z)
         end
 
         self:updatePhysics()
+
+        -- check if happy enough to hop
+        if self.happiness >= 2 and self.dx == 0 and self.dy == 0 and self.z == 0 then
+            self.dz = 3
+        end
 
         -- check if in any puddles
         self.wet = 0
@@ -206,7 +225,7 @@ function stateBasedMove(person)
         idle(person)
         if thereIsFire then
             person.state = personStates.fleeFire
-        elseif thereIsFood then
+        elseif thereIsFood and person.happiness < 3 then
             person.state = personStates.getFood
         else
             --do nothing
@@ -235,33 +254,47 @@ end
 function idle(person)
     local waypointForcePower = 0.01
 
-    if distanceToPoint(person, person.waypoint) < 3 then
-        newWaypoint(person)
-    end
+    if person.waypoint then
+        person.dx += -1 * (person.x - person.waypoint.x) * waypointForcePower
+        person.dy += -1 * (person.y - person.waypoint.y) * waypointForcePower
 
-    person.dx = -1 * (person.x - person.waypoint.x) * waypointForcePower
-    person.dy = -1 * (person.y - person.waypoint.y) * waypointForcePower
+        if distanceToPoint(person, person.waypoint) < 3 then
+            person.waypoint = nil
+        end
+    else
+        person.dx *= 0.5
+        person.dy *= 0.5
+        if rnd() < 0.02 then
+            newWaypoint(person)
+        end
+    end
 end
 
 function getFood(person)
     --food
     local closestFood = nil
-    local shortestDistance = 30000
-    local foodForcePower = 0.03
+    local closestDist = nil
+    local foodForcePower = 1
 
     for food in all(foods) do
         if food.z == 0 then
             local dist = distanceToPoint(person, food)
-            if dist < shortestDistance then
+            if not closestDist or dist < closestDist then
                 closestFood = food
-                shortestDistance = dist
+                closestDist = dist
             end
         end
     end
 
     if closestFood then
-        person.dx = -1 * (person.x - closestFood.x) * foodForcePower
-        person.dy = -1 * (person.y - closestFood.y) * foodForcePower
+        if closestDist < 2 then
+            person.happiness += 1
+            del(objects, closestFood)
+            del(foods, closestFood)
+        else
+            person.dx += -1 * (person.x - closestFood.x) * foodForcePower / closestDist
+            person.dy += -1 * (person.y - closestFood.y) * foodForcePower / closestDist
+        end
     end
 end
 
@@ -282,8 +315,8 @@ function fleeFire(person)
             end
         end
 
-        person.dx = 1 * (person.x - closestFire.x) * fireForcePower
-        person.dy = 1 * (person.y - closestFire.y) * fireForcePower
+        person.dx += 1 * (person.x - closestFire.x) * fireForcePower
+        person.dy += 1 * (person.y - closestFire.y) * fireForcePower
     else
         --do nothing
     end
