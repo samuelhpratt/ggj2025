@@ -156,7 +156,7 @@ function updateDome()
             if #people == 1 then
                 endingText = "1 mikkel escaped."
             else
-                endingText = #people.." mikkes escaped."
+                endingText = #people.." mikkels escaped."
             end
         end
     end

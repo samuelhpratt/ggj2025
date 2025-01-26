@@ -1,4 +1,4 @@
-foodRange = 8
+foodRange = 6
 
 personStates = {
     idle = 1,
@@ -38,7 +38,7 @@ function spawnPerson(x, y, z)
     person.wet = 0
     person.state = personStates.idle
     person.happiness = 0
-    person.health = 10
+    person.health = 30
     person.dx = 0
     person.dy = 0
     -- add any other person-specific parameters here!
@@ -189,14 +189,12 @@ function spawnPerson(x, y, z)
                 person.happiness = -2
             end
         end
-
+        
         -- stop when looked at by hourglass
-        if selectedPerson == self then
-            self.dx = 0
-            self.dy = 0
+        if selectedPerson ~= self then
+            self:updatePhysics()
         end
 
-        self:updatePhysics()
 
         -- check if happy enough to hop
         if self.happiness >= 2 and self.dx == 0 and self.dy == 0 and self.z == -self.wet then
@@ -252,7 +250,6 @@ function stateBasedMove(person)
     * runfromfire
     * rejoiceinrain
     ]]
-    -- log(person.state)
 
     if person.state == personStates.idle then
         idle(person)
@@ -276,7 +273,7 @@ function stateBasedMove(person)
         getFood(person)
         if thereIsFire then
             person.state = personStates.fleeFire
-        elseif not thereIsFood then
+        elseif not thereIsFood or person.happiness >= 3 then
             person.state = personStates.idle
         else
             --do nothing

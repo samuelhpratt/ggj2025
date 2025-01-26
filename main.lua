@@ -1,10 +1,11 @@
 poke(0x5F2D, 1) -- enable mouse
-music(0)
 
 screen = "title"
 offset = 0
 
 function _init()
+    music(0)
+
     cracking = 0
     blackScreen = 0
     broken = false
@@ -81,8 +82,13 @@ function drawTitle()
     spr(192, 0, 4, 16, 4)
 
     if offset == 0 then
-        print("press ❎ to start", 30, 90, 7)
+        print("press ❎ to start", 30, 80, 7)
     end
+
+    print("samuel pratt", 2, 112, 1)
+    print("sunny berry", 82, 112, 1)
+    print("max murphy", 2, 120, 1)
+    print("michael (mb)", 79, 120, 1)
 end
 
 function _update()
@@ -132,12 +138,17 @@ function _update()
                 closestDist = dist
             end
         end
-        if closest ~= selectedPerson and selectedPerson ~= nil then
-            selectedPerson = nil
-        else
-            selectedPerson = closest
+        if mouseMoved or not selectedPerson then
+            if closest ~= selectedPerson then
+                if selectedPerson then
+                    selectedPerson = nil
+                    dialogue = nil
+                else
+                    selectedPerson = closest
+                end
+            end
         end
-    else
+    elseif mouseMoved then
         selectedPerson = nil
     end
 

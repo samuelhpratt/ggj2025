@@ -73,6 +73,7 @@ function updateDialogue()
 end
 
 function drawButtons()
+    mouseState = "open"
     for i, tab in ipairs(tabs) do
         local x, y = 64 - (#tabs * tabSpacing * 0.5) + (i - 1) * tabSpacing, -1
         y -= offset
@@ -119,7 +120,7 @@ function updateButtons()
 end
 
 function updateUI()
-    mouseState = "open"
+    mouseMoved = not (mouseX == stat(32) and mouseY == stat(33))
     mouseX, mouseY = stat(32), stat(33)
     mouseDown = not mouseHeld and stat(34) > 0
     -- true on the first frame the mouse is pressed
@@ -136,7 +137,7 @@ function updateUI()
     if endingCountdown > 0 then
         endingCountdown -= 1
     end
-    
+
     if endingCountdown <= 0 and endingText then
         if btnp(5) then
             _init()
@@ -207,7 +208,8 @@ function drawUI()
 
     if endingCountdown < 10 and endingText then
         printOutlined("experiment over.", 32, 40)
-        printOutlined(endingText, 66 - #endingText * 2, 60)
-        printOutlined("press ❎ to return", 30, 80)
+        printOutlined(endingText, 66 - #endingText * 2, 50)
+        printOutlined("thanks for playing!", 28, 80)
+        printOutlined("press ❎ to return", 30, 90)
     end
 end
