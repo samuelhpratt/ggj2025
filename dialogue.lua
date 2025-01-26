@@ -129,7 +129,7 @@ dialogueLines = {
         "i'm hoping to get mikkel\nto manage my socials.",
         "i'm talking a lot, but i'm\nnot really saying anything!",
         -- babygirl generic
-        "mikkel and i are to~tal\nbesties, you're my bestest\nthough."
+        "mikkel and i are to~tal\nbesties, you're my bestest\nthough.",
         "doughhhhh~mah. doe~me!\ndommy. doh~meymey. heh.",
         "what's your dome like,\ncrea~tor? i bet it's super\nsparkly.",
         "let's make a secret\nhandshake. the secret? i have\nno hands!"
