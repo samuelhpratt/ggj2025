@@ -87,6 +87,31 @@ dialogueLines = {
         "one time i bit mikkel\nand they tasted like soggy\nkibbies. y~um.",
         "split kibbie with your lover.\nhalf the food, twice the\nresentment."
     },
+    happy = {
+        -- fanatic happy
+        "it is blessed to be within\nthe dome, such a happy day!",
+        "everyday i thank the creator\ni have no free will!",
+        "do you hear us creator? we\nsing our thanks for this day!",
+        "today is so beautiful, i\nalmost forgot i am trapped\nin a dome.",
+        -- gigachad happy
+        "i'm totally gonna smash my\npr today!",
+        "everyday is leg day when\nyou're a mikkel!",
+        "brah, why do they say break\na leg? that's like... half of\nmy being.",
+        "all this happiness is great\nfor the legs, i'm practically\njumping!",
+        -- influencer happy
+        "today is better than when i\ndoubled my organic\nvisibility!",
+        "nothing like that stale dome\nair, what a day to be alive!",
+        "oh my dome! i was having\nsuch a good time i nearly\nforgot to post!",
+        "hashtag happy hashtag\ndomelife hashtag creebies\nhashtag bestdayever!",
+        -- babygirl happy
+        "it's a g~ood day to be\ntrapped in a dome!",
+        "you know what would make\nthis day better? ki~bbies!",
+        "you, me, a packet of kibbies,\nthat mikkel over there.\nperfect, right?",
+        "i'm motivated to get my\nsteps in! ... one! i did it!\nki~bbie time!"
+    },
+    unhappy = {
+
+    },
     generic = {
         -- fanatic generic
         "the dome is forever, why\nwould mikkel want to leave?",
@@ -104,7 +129,7 @@ dialogueLines = {
         "i'm hoping to get mikkel\nto manage my socials.",
         "i'm talking a lot, but i'm\nnot really saying anything!",
         -- babygirl generic
-        "mikkel and i are to~tal\nbesties, you're my bestest\nthough.",
+        "mikkel and i are to~tal\nbesties, you're my bestest\nthough."
         "doughhhhh~mah. doe~me!\ndommy. doh~meymey. heh.",
         "what's your dome like,\ncrea~tor? i bet it's super\nsparkly.",
         "let's make a secret\nhandshake. the secret? i have\nno hands!"
